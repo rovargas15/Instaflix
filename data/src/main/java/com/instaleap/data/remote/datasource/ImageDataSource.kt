@@ -6,8 +6,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.http.HttpStatusCode
+import javax.inject.Inject
 
-class ImageDataSource(private val client: HttpClient) : ImageApi {
+class ImageDataSource @Inject constructor(private val client: HttpClient) : ImageApi {
 
     override suspend fun getImageById(id: Int): MovieImageResponse {
         val response = client.get("movie/$id/images?language=es")

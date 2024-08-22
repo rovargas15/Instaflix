@@ -8,19 +8,13 @@ import com.instaleap.data.local.entity.MovieEntity
 import com.instaleap.data.local.entity.TvEntity
 
 @Database(entities = [MovieEntity::class, TvEntity::class], version = 1)
-abstract class InstaflixDatabase : RoomDatabase(), DB {
+abstract class InstaflixDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
 
     abstract fun tvDao(): TvDao
 
-    override fun clearAllTables() {}
-
     companion object {
-        const val DB_FILE_NAME = "movies_database.db"
+        const val DB_FILE_NAME = "Instaflix.db"
     }
 }
 
-// temporal hack
-interface DB {
-    fun clearAllTables() {}
-}

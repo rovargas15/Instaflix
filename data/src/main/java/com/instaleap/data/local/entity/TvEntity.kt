@@ -2,6 +2,7 @@ package com.instaleap.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
 import com.instaleap.domain.model.Tv
 
 @Entity
@@ -10,9 +11,9 @@ data class TvEntity(
     val adult: Boolean,
     val backdropPath: String,
     val firstAirDate: String,
-    val genreIds: List<Int>,
+    @field:TypeConverters(GenreConvert::class) val genreIds: List<Int>,
     val name: String,
-    val originCountry: List<String>,
+    @field:TypeConverters(ListStringConvert::class) val originCountry: List<String>,
     val originalLanguage: String,
     val originalName: String,
     val overview: String,

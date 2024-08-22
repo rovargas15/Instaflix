@@ -9,10 +9,11 @@ import com.instaleap.domain.model.DataBase
 import com.instaleap.domain.model.Movie
 import com.instaleap.domain.model.MovieDetail
 import com.instaleap.domain.repository.MovieRepository
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class MovieRepositoryImpl(
+class MovieRepositoryImpl @Inject constructor(
     private val dataSourceRemote: MovieDataSource,
     private val db: InstaflixDatabase,
 ) : BaseRepository(), MovieRepository {
@@ -21,8 +22,7 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun getMovieById(id: Int): Flow<Movie> =
-        db.movieDao().getMovieById(id)
-            .map { resultsChange -> resultsChange.toDomain() }
+        db.movieDao().getMovieById(id).map { resultsChange -> resultsChange.toDomain() }
 
     override suspend fun getMovieDetailById(id: Int): Result<MovieDetail> = launchResultSafe {
         dataSourceRemote.getMovieById(id).toDomain()

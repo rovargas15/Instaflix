@@ -1,6 +1,6 @@
 package com.instaleap.data.remote.response
 
-import com.instaleap.domain.model.MovieDetail
+import com.instaleap.domain.model.ProductionCompany
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,7 +11,7 @@ data class ProductionCompanyResponse(
     @SerialName("name") val name: String,
     @SerialName("origin_country") val originCountry: String,
 ) {
-    fun toDomain() = MovieDetail.ProductionCompany(
+    fun toDomain() = ProductionCompany(
         id = id,
         logoPath = logoPath,
         name = name,

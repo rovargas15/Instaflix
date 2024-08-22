@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlinxSerialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
     alias(libs.plugins.room)
 }
 
@@ -49,6 +50,10 @@ android {
 dependencies {
     implementation(project(":domain"))
     implementation(libs.kotlinx.coroutines.android)
+
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    ksp(libs.hilt.compiler)
 
     implementation(platform(libs.ktor.bom))
     implementation(libs.ktor.android)

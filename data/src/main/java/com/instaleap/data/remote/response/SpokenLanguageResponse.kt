@@ -1,6 +1,6 @@
 package com.instaleap.data.remote.response
 
-import com.instaleap.domain.model.MovieDetail
+import com.instaleap.domain.model.SpokenLanguage
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,7 +10,7 @@ data class SpokenLanguageResponse(
     @SerialName("iso_639_1") val iso6391: String,
     @SerialName("name") val name: String,
 ) {
-    fun toDomain() = MovieDetail.SpokenLanguage(
+    fun toDomain() = SpokenLanguage(
         englishName = englishName,
         iso6391 = iso6391,
         name = name,

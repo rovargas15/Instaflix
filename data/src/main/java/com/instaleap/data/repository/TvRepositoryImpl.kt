@@ -9,10 +9,11 @@ import com.instaleap.domain.model.DataBase
 import com.instaleap.domain.model.Tv
 import com.instaleap.domain.model.TvDetail
 import com.instaleap.domain.repository.TvRepository
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class TvRepositoryImpl(
+class TvRepositoryImpl @Inject constructor(
     private val dataSourceRemote: TvDataSource,
     private val db: InstaflixDatabase,
 ) : BaseRepository(), TvRepository {
