@@ -1,7 +1,10 @@
 package com.instaleap.tv.di
 
 import com.instaleap.domain.repository.TvRepository
+import com.instaleap.domain.usecase.GetTvById
 import com.instaleap.domain.usecase.GetTvDetailById
+import com.instaleap.domain.usecase.UpdateMovie
+import com.instaleap.domain.usecase.UpdateTv
 import com.instaleap.tv.ui.detail.DetailViewModel
 import dagger.Module
 import dagger.Provides
@@ -19,8 +22,23 @@ object TvDetailModule {
 
     @Provides
     @ViewModelScoped
+    fun getTvByIdProvider(repository: TvRepository) = GetTvById(repository)
+
+    @Provides
+    @ViewModelScoped
+    fun updateTvProvider(repository: TvRepository) = UpdateTv(repository)
+
+    @Provides
+    @ViewModelScoped
     fun detailViewModelProvider(
         getDetailUseCase: GetTvDetailById,
+        getMovieById: GetTvById,
+        updateTv: UpdateTv,
         coroutineDispatcher: CoroutineDispatcher,
-    ) = DetailViewModel(getDetailUseCase, coroutineDispatcher)
+    ) = DetailViewModel(
+        getDetailUseCase = getDetailUseCase,
+        getMovieById = getMovieById,
+        updateTv = updateTv,
+        coroutineDispatcher = coroutineDispatcher,
+    )
 }

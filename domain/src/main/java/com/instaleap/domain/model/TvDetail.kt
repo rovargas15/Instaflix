@@ -15,7 +15,7 @@ data class TvDetail(
     val lastEpisodeToAir: LastEpisodeToAir,
     val name: String,
     val networks: List<Network>,
-    val nextEpisodeToAir: NextEpisodeToAir,
+    val nextEpisodeToAir: NextEpisodeToAir?,
     val numberOfEpisodes: Int,
     val numberOfSeasons: Int,
     val originCountry: List<String>,
@@ -53,8 +53,8 @@ data class TvDetail(
         val runtime: Int?,
         val seasonNumber: Int,
         val showId: Int,
-        val stillPath: String,
-        val voteAverage: Int,
+        val stillPath: String?,
+        val voteAverage: Double,
         val voteCount: Int,
     )
 
@@ -76,9 +76,9 @@ data class TvDetail(
         val runtime: Int?,
         val seasonNumber: Int,
         val showId: Int,
-        val stillPath: String,
-        val voteAverage: Int,
-        val voteCount: Int,
+        val stillPath: String?,
+        val voteAverage: Double,
+        val voteCount: Double,
     )
 
     data class Season(
@@ -89,6 +89,6 @@ data class TvDetail(
         val overview: String,
         val posterPath: String,
         val seasonNumber: Int,
-        val voteAverage: Int,
+        val voteAverage: Double,
     )
 }

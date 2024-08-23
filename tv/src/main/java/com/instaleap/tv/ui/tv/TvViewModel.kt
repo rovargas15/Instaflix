@@ -33,7 +33,7 @@ class TvViewModel
                                 "popular" -> {
                                     updateState {
                                         copy(
-                                            tvPopular = it.results,
+                                            listPopular = it.results,
                                         )
                                     }
                                 }
@@ -41,7 +41,7 @@ class TvViewModel
                                 "top_rated" -> {
                                     updateState {
                                         copy(
-                                            tvTopRated = it.results,
+                                            listTopRated = it.results,
                                         )
                                     }
                                 }
@@ -49,7 +49,7 @@ class TvViewModel
                                 "on_the_air" -> {
                                     updateState {
                                         copy(
-                                            tvOnTheAir = it.results,
+                                            listOnTheAir = it.results,
                                         )
                                     }
                                 }

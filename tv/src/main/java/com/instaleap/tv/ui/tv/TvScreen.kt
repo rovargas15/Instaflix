@@ -52,6 +52,7 @@ fun ContentScreen(
     onUiEvent: (UiEventTv) -> Unit,
 ) {
     TopBarMovie(
+        selected = Router.Tv,
         content = { innerPadding ->
 
             if (uiState.isLoading) {
@@ -66,23 +67,29 @@ fun ContentScreen(
                         .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                TextCategory(
-                    title = stringResource(R.string.title_popular),
-                )
+                if (uiState.listPopular.isNotEmpty()) {
+                    TextCategory(
+                        title = stringResource(R.string.title_popular),
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                    TvList(uiState.listPopular, onUiEvent)
+                }
 
-                TvList(uiState.tvPopular, onUiEvent)
+                if (uiState.listTopRated.isNotEmpty()) {
+                    TextCategory(
+                        title = stringResource(R.string.title_top_rated),
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                    TvList(uiState.listTopRated, onUiEvent)
+                }
 
-                TextCategory(
-                    title = stringResource(R.string.title_top_rated),
-                )
-
-                TvList(uiState.tvTopRated, onUiEvent)
-
-                TextCategory(
-                    title = stringResource(R.string.title_on_the_air),
-                )
-
-                TvList(uiState.tvOnTheAir, onUiEvent)
+                if (uiState.listOnTheAir.isNotEmpty()) {
+                    TextCategory(
+                        title = stringResource(R.string.title_on_the_air),
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                    TvList(uiState.listOnTheAir, onUiEvent)
+                }
             }
         },
         router = {
@@ -97,8 +104,7 @@ fun TvList(
     onUiEvent: (UiEventTv) -> Unit,
 ) {
     LazyRow(
-        modifier =
-            Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         content = {
             items(tv) { tv ->

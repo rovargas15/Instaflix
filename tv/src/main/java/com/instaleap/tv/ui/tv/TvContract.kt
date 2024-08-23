@@ -6,9 +6,9 @@ import com.instaleap.domain.model.Tv
 interface TvContract {
     data class UiStateTv(
         val isLoading: Boolean = false,
-        val tvPopular: List<Tv> = emptyList(),
-        val tvTopRated: List<Tv> = emptyList(),
-        val tvOnTheAir: List<Tv> = emptyList(),
+        val listPopular: List<Tv> = emptyList(),
+        val listTopRated: List<Tv> = emptyList(),
+        val listOnTheAir: List<Tv> = emptyList(),
     )
 
     sealed class UiEventTv {
