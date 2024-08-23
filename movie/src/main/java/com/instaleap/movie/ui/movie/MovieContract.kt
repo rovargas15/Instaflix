@@ -6,9 +6,9 @@ import com.instaleap.domain.model.Movie
 interface MovieContract {
     data class UiStateMovie(
         val isLoading: Boolean = false,
-        val moviesPopular: List<Movie> = emptyList(),
-        val moviesTopRated: List<Movie> = emptyList(),
-        val moviesUpcoming: List<Movie> = emptyList(),
+        val listPopular: List<Movie> = emptyList(),
+        val listTopRated: List<Movie> = emptyList(),
+        val listUpcoming: List<Movie> = emptyList(),
     )
 
     sealed class UiEventMovie {

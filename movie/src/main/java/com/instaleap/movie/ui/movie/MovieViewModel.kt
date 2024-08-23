@@ -33,7 +33,7 @@ class MovieViewModel
                                 "popular" -> {
                                     updateState {
                                         copy(
-                                            moviesPopular = it.results,
+                                            listPopular = it.results,
                                         )
                                     }
                                 }
@@ -41,7 +41,7 @@ class MovieViewModel
                                 "top_rated" -> {
                                     updateState {
                                         copy(
-                                            moviesTopRated = it.results,
+                                            listTopRated = it.results,
                                         )
                                     }
                                 }
@@ -49,7 +49,7 @@ class MovieViewModel
                                 "upcoming" -> {
                                     updateState {
                                         copy(
-                                            moviesUpcoming = it.results,
+                                            listUpcoming = it.results,
                                         )
                                     }
                                 }

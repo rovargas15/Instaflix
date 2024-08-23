@@ -1,11 +1,11 @@
 package com.instaleap.data.remote.response
 
-import com.instaleap.domain.model.MovieImage
+import com.instaleap.domain.model.Image
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MovieImageResponse(
+data class ImageResponse(
     @SerialName("backdrops") val backdrops: List<PosterResponse>,
     @SerialName("id") val id: Int,
     @SerialName("logos") val logos: List<PosterResponse>,
@@ -21,21 +21,23 @@ data class MovieImageResponse(
         @SerialName("vote_count") val voteCount: Int?,
         @SerialName("width") val width: Int?,
     ) {
-        fun toDomain() = MovieImage.Poster(
-            aspectRatio = aspectRatio,
-            filePath = filePath,
-            height = height,
-            iso6391 = iso6391,
-            voteAverage = voteAverage,
-            voteCount = voteCount,
-            width = width,
-        )
+        fun toDomain() =
+            Image.Poster(
+                aspectRatio = aspectRatio,
+                filePath = filePath,
+                height = height,
+                iso6391 = iso6391,
+                voteAverage = voteAverage,
+                voteCount = voteCount,
+                width = width,
+            )
     }
 
-    fun toDomain() = MovieImage(
-        backdrops = backdrops.map { it.toDomain() },
-        id = id,
-        logos = logos.map { it.toDomain() },
-        posters = posters.map { it.toDomain() },
-    )
+    fun toDomain() =
+        Image(
+            backdrops = backdrops.map { it.toDomain() },
+            id = id,
+            logos = logos.map { it.toDomain() },
+            posters = posters.map { it.toDomain() },
+        )
 }

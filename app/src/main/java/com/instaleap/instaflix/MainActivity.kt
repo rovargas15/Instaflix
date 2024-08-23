@@ -16,9 +16,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.instaleap.appkit.component.ItemCard
 import com.instaleap.appkit.component.TopBarMovie
+import com.instaleap.core.route.Router
 import com.instaleap.instaflix.ui.theme.InstaflixTheme
 import com.instaleap.presentation.nav.NavigatorApp
-import dagger.hilt.EntryPoint
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -59,6 +59,7 @@ fun ItemCardPreview() {
                     },
                 )
             },
+            selected = Router.Tv,
             router = {
             },
         )

@@ -52,8 +52,8 @@ fun ContentScreen(
     onUiEvent: (UiEventMovie) -> Unit,
 ) {
     TopBarMovie(
+        selected = Router.Movie,
         content = { innerPadding ->
-
             if (uiState.isLoading) {
                 // TODO: implement loader here
             }
@@ -66,23 +66,29 @@ fun ContentScreen(
                         .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                TextCategory(
-                    title = stringResource(R.string.title_popular),
-                )
+                if (uiState.listPopular.isNotEmpty()) {
+                    TextCategory(
+                        title = stringResource(R.string.title_popular),
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                    MovieList(uiState.listPopular, onUiEvent)
+                }
 
-                MovieList(uiState.moviesPopular, onUiEvent)
+                if (uiState.listTopRated.isNotEmpty()) {
+                    TextCategory(
+                        title = stringResource(R.string.title_top_rated),
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                    MovieList(uiState.listTopRated, onUiEvent)
+                }
 
-                TextCategory(
-                    title = stringResource(R.string.title_top_rated),
-                )
-
-                MovieList(uiState.moviesTopRated, onUiEvent)
-
-                TextCategory(
-                    title = stringResource(R.string.title_upcoming),
-                )
-
-                MovieList(uiState.moviesUpcoming, onUiEvent)
+                if (uiState.listUpcoming.isNotEmpty()) {
+                    TextCategory(
+                        title = stringResource(R.string.title_upcoming),
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                    MovieList(uiState.listUpcoming, onUiEvent)
+                }
             }
         },
         router = {

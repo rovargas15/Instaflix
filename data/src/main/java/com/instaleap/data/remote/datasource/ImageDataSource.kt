@@ -1,7 +1,7 @@
 package com.instaleap.data.remote.datasource
 
 import com.instaleap.data.remote.api.ImageApi
-import com.instaleap.data.remote.response.MovieImageResponse
+import com.instaleap.data.remote.response.ImageResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -10,10 +10,10 @@ import javax.inject.Inject
 
 class ImageDataSource @Inject constructor(private val client: HttpClient) : ImageApi {
 
-    override suspend fun getImageById(id: Int): MovieImageResponse {
+    override suspend fun getImageById(id: Int): ImageResponse {
         val response = client.get("movie/$id/images?language=es")
         if (response.status == HttpStatusCode.OK) {
-            return response.body<MovieImageResponse>()
+            return response.body<ImageResponse>()
         } else {
             throw Throwable(response.status.description)
         }

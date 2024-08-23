@@ -11,7 +11,6 @@ fun LoaderImage(
     url: String,
     modifier: Modifier,
 ) {
-
     AsyncImage(
         model = "${BuildConfig.URL_BASE_IMG}original/$url",
         contentDescription = null,
@@ -25,7 +24,6 @@ fun LoaderImagePoster(
     url: String,
     modifier: Modifier = Modifier,
 ) {
-
     AsyncImage(
         model = "${BuildConfig.URL_BASE_IMG}w500/$url",
         contentDescription = null,

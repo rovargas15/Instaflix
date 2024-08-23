@@ -1,8 +1,8 @@
 package com.instaleap.data.remote.api
 
-import com.instaleap.data.remote.response.MovieImageResponse
+import com.instaleap.data.remote.response.ImageResponse
 
 interface ImageApi {
 
-    suspend fun getImageById(id: Int): MovieImageResponse
+    suspend fun getImageById(id: Int): ImageResponse
 }

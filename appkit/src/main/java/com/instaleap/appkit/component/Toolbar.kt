@@ -4,17 +4,21 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.instaleap.appkit.R
+import com.instaleap.appkit.theme.RedLevel03
+import com.instaleap.core.route.MenuItem
 import com.instaleap.core.route.Router
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,6 +26,7 @@ import com.instaleap.core.route.Router
 fun TopBarMovie(
     content: @Composable (PaddingValues) -> Unit,
     router: (Router) -> Unit,
+    selected: Router,
 ) {
     Scaffold(
         topBar = {
@@ -36,24 +41,17 @@ fun TopBarMovie(
                     Image(
                         painter = painterResource(id = R.drawable.logo),
                         contentDescription = "Logo",
-                        modifier = Modifier.size(40.dp),
+                        modifier = Modifier.fillMaxHeight(),
+                        contentScale = ContentScale.Fit,
                     )
-                    AppKitLinkButton(
-                        text = "TV Shows",
-                    ) {
-                        router(Router.Tv)
-                    }
 
-                    AppKitLinkButton(
-                        text = "Movies",
-                    ) {
-                        router(Router.Movie)
-                    }
-
-                    AppKitLinkButton(
-                        text = "My List",
-                    ) {
-                        router(Router.Favorite)
+                    MenuItem.items.forEach {
+                        AppKitLinkButton(
+                            text = it.title,
+                            color = if (it.route == selected) RedLevel03 else colorScheme.onPrimaryContainer,
+                        ) {
+                            router(it.route)
+                        }
                     }
                 }
             })

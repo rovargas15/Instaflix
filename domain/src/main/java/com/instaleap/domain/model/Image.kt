@@ -1,6 +1,6 @@
 package com.instaleap.domain.model
 
-data class MovieImage(
+data class Image(
     val backdrops: List<Poster>,
     val id: Int,
     val logos: List<Poster>,

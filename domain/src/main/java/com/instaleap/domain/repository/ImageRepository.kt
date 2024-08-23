@@ -1,8 +1,8 @@
 package com.instaleap.domain.repository
 
-import com.instaleap.domain.model.MovieImage
+import com.instaleap.domain.model.Image
 
 interface ImageRepository {
 
-    suspend fun getMovieImageById(id: Int): Result<MovieImage>
+    suspend fun getMovieImageById(id: Int): Result<Image>
 }

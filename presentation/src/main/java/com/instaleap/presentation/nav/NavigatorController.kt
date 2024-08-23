@@ -34,7 +34,7 @@ fun NavGraphBuilder.movie(navController: NavHostController) {
     composable<Router.DetailMovie> {
         DetailMovieScreen(
             movieId = it.toRoute<Router.DetailMovie>().id,
-            onBackPressed = {
+            navigateToBack = {
                 navController.navigateUp()
             },
         )
@@ -48,8 +48,8 @@ fun NavGraphBuilder.tv(navController: NavHostController) {
 
     composable<Router.DetailTv> {
         DetailTvScreen(
-            movieId = it.toRoute<Router.DetailMovie>().id,
-            onBackPressed = {
+            tvId = it.toRoute<Router.DetailTv>().id,
+            navigateToBack = {
                 navController.navigateUp()
             },
         )

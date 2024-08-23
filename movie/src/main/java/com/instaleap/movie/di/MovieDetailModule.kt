@@ -1,8 +1,10 @@
 package com.instaleap.movie.di
 
 import com.instaleap.domain.repository.MovieRepository
+import com.instaleap.domain.usecase.GetMovieById
 import com.instaleap.domain.usecase.GetMovieDetailById
-import com.instaleap.presentation.movie.detail.DetailViewModel
+import com.instaleap.domain.usecase.UpdateMovie
+import com.instaleap.movie.ui.detail.DetailViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,8 +21,23 @@ object MovieDetailModule {
 
     @Provides
     @ViewModelScoped
+    fun getMovieByIdProvider(repository: MovieRepository) = GetMovieById(repository)
+
+    @Provides
+    @ViewModelScoped
+    fun updateMovieProvider(repository: MovieRepository) = UpdateMovie(repository)
+
+    @Provides
+    @ViewModelScoped
     fun detailViewModelProvider(
         getDetailUseCase: GetMovieDetailById,
+        getMovieById: GetMovieById,
+        updateMovie: UpdateMovie,
         coroutineDispatcher: CoroutineDispatcher,
-    ) = DetailViewModel(getDetailUseCase, coroutineDispatcher)
+    ) = DetailViewModel(
+        getDetailUseCase = getDetailUseCase,
+        getMovieById = getMovieById,
+        updateMovie = updateMovie,
+        coroutineDispatcher = coroutineDispatcher,
+    )
 }
