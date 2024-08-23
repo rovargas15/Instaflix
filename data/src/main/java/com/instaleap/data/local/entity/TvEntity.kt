@@ -24,41 +24,22 @@ data class TvEntity(
     val category: String,
     val isFavorite: Int,
 ) {
-
-    fun toDomain() = Tv(
-        id = id,
-        adult = adult,
-        backdropPath = backdropPath,
-        genreIds = genreIds.toList(),
-        originalLanguage = originalLanguage,
-        overview = overview,
-        popularity = popularity,
-        posterPath = posterPath,
-        voteAverage = voteAverage,
-        voteCount = voteCount,
-        isFavorite = isFavorite == 1,
-        name = name,
-        firstAirDate = firstAirDate,
-        originalName = originalName,
-        originCountry = originCountry,
-    )
+    fun toDomain() =
+        Tv(
+            id = id,
+            adult = adult,
+            backdropPath = backdropPath,
+            genreIds = genreIds.toList(),
+            originalLanguage = originalLanguage,
+            overview = overview,
+            popularity = popularity,
+            posterPath = posterPath,
+            voteAverage = voteAverage,
+            voteCount = voteCount,
+            isFavorite = isFavorite == 1,
+            name = name,
+            firstAirDate = firstAirDate,
+            originalName = originalName,
+            originCountry = originCountry,
+        )
 }
-
-fun Tv.toEntity() = TvEntity(
-    id = id,
-    category = "",
-    adult = adult,
-    backdropPath = backdropPath,
-    genreIds = genreIds,
-    originalLanguage = originalLanguage,
-    originalName = originalName,
-    overview = overview,
-    popularity = popularity,
-    posterPath = posterPath,
-    voteAverage = voteAverage,
-    voteCount = voteCount,
-    isFavorite = if (isFavorite) 1 else 0,
-    name = name,
-    firstAirDate = firstAirDate,
-    originCountry = originCountry,
-)

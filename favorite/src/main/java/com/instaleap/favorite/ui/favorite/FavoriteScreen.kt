@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.instaleap.appkit.component.ItemCard
@@ -22,6 +23,7 @@ import com.instaleap.core.CollectEffects
 import com.instaleap.core.route.Router
 import com.instaleap.domain.model.Movie
 import com.instaleap.domain.model.Tv
+import com.instaleap.favorite.R
 import com.instaleap.favorite.ui.favorite.FavoriteContract.UiEvent
 
 @Composable
@@ -50,8 +52,8 @@ fun ContentScreen(
     onUiEvent: (UiEvent) -> Unit,
 ) {
     TopBarMovie(
+        selected = Router.Favorite,
         content = { innerPadding ->
-
             if (uiState.isLoading) {
                 // TODO: implement loader here
             }
@@ -64,17 +66,21 @@ fun ContentScreen(
                         .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                TextCategory(
-                    title = "Movie",
-                )
+                if (uiState.listMovies.isNotEmpty()) {
+                    TextCategory(
+                        title = stringResource(R.string.title_movie),
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                    MovieList(uiState.listMovies, onUiEvent)
+                }
 
-                MovieList(uiState.movies, onUiEvent)
-
-                TextCategory(
-                    title = "Tv Show",
-                )
-
-                TvList(uiState.tvs, onUiEvent)
+                if (uiState.listTvs.isNotEmpty()) {
+                    TextCategory(
+                        title = stringResource(R.string.title_tv),
+                        modifier = Modifier.padding(start = 10.dp),
+                    )
+                    TvList(uiState.listTvs, onUiEvent)
+                }
             }
         },
         router = {

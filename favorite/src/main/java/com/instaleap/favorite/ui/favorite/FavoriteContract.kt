@@ -7,8 +7,8 @@ import com.instaleap.domain.model.Tv
 interface FavoriteContract {
     data class UiState(
         val isLoading: Boolean = false,
-        val movies: List<Movie> = emptyList(),
-        val tvs: List<Tv> = emptyList(),
+        val listMovies: List<Movie> = emptyList(),
+        val listTvs: List<Tv> = emptyList(),
     )
 
     sealed class UiEvent {
