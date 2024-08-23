@@ -9,28 +9,32 @@ import com.instaleap.domain.model.DataBase
 import com.instaleap.domain.model.Movie
 import com.instaleap.domain.model.MovieDetail
 import com.instaleap.domain.repository.MovieRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
     private val dataSourceRemote: MovieDataSource,
     private val db: InstaflixDatabase,
-) : BaseRepository(), MovieRepository {
-    override suspend fun getMovies(category: String): Result<DataBase<Movie>> = launchResultSafe {
-        saveMovies(dataSourceRemote.getMovies(category), category)
-    }
+) : BaseRepository(),
+    MovieRepository {
+    override suspend fun getMovies(category: String): Result<DataBase<Movie>> =
+        launchResultSafe {
+            saveMovies(dataSourceRemote.getMovies(category), category)
+        }
 
     override suspend fun getMovieById(id: Int): Flow<Movie> =
         db.movieDao().getMovieById(id).map { resultsChange -> resultsChange.toDomain() }
 
-    override suspend fun getMovieDetailById(id: Int): Result<MovieDetail> = launchResultSafe {
-        dataSourceRemote.getMovieById(id).toDomain()
-    }
+    override suspend fun getMovieDetailById(id: Int): Result<MovieDetail> =
+        launchResultSafe {
+            dataSourceRemote.getMovieById(id).toDomain()
+        }
 
-    override suspend fun getSearchMovie(query: String): Result<DataBase<Movie>> = launchResultSafe {
-        saveMovies(dataSourceRemote.getMoviesByQuery(query))
-    }
+    override suspend fun getSearchMovie(query: String): Result<DataBase<Movie>> =
+        launchResultSafe {
+            saveMovies(dataSourceRemote.getMoviesByQuery(query))
+        }
 
     override suspend fun getFavoriteMovie(): Flow<List<Movie>> =
         db.movieDao().getAllAsFlow().map { resultsChange ->
@@ -45,9 +49,10 @@ class MovieRepositoryImpl @Inject constructor(
         category: String,
         pageSize: Int,
         page: Int,
-    ): Result<DataBase<Movie>> = launchResultSafe {
-        saveMovies(dataSourceRemote.getMovies(category, page), category)
-    }
+    ): Result<DataBase<Movie>> =
+        launchResultSafe {
+            saveMovies(dataSourceRemote.getMovies(category, page), category)
+        }
 
     private suspend fun saveMovies(
         response: BaseResponse<MovieResponse>,

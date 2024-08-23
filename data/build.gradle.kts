@@ -23,8 +23,9 @@ android {
         properties.load(project.rootProject.file("secrets.properties").reader())
         val apiKey = properties.getProperty("API_KEY")
 
-        buildConfigField("String", "API_KEY", "\"apiKey\"")
+        buildConfigField("String", "API_KEY", "\"$apiKey\"")
         buildConfigField("String", "URL_BASE", "\"https://api.themoviedb.org/3/\"")
+        buildConfigField("String", "URL_BASE_IMG", "\"https://image.tmdb.org/t/p/\"")
     }
 
     buildTypes {

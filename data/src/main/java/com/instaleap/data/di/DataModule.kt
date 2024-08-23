@@ -17,6 +17,7 @@ import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
+
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
