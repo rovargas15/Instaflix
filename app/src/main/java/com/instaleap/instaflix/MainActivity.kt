@@ -53,7 +53,7 @@ fun ItemCardPreview() {
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     content = {
                         items(5) {
-                            ItemCard("") {
+                            ItemCard(posterPath = "") {
                             }
                         }
                     },

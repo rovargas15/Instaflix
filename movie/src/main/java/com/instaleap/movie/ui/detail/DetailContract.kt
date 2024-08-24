@@ -20,7 +20,9 @@ interface DetailContract {
         ) : UiEventDetail()
 
         data object NavigateToBack : UiEventDetail()
+
         data object RemoveFavorite : UiEventDetail()
+
         data object DismissDialog : UiEventDetail()
     }
 

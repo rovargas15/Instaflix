@@ -146,7 +146,7 @@ fun MovieList(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         content = {
             items(movies) { movie ->
-                ItemCard(movie.posterPath) {
+                ItemCard(posterPath = movie.posterPath) {
                     onUiEvent(UiEvent.Navigate(Router.DetailMovie(movie.id)))
                 }
             }
@@ -165,7 +165,7 @@ fun TvList(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         content = {
             items(tv) { tv ->
-                ItemCard(tv.posterPath) {
+                ItemCard(posterPath = tv.posterPath) {
                     onUiEvent(UiEvent.Navigate(Router.DetailTv(tv.id)))
                 }
             }

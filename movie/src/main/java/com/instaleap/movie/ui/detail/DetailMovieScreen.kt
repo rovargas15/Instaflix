@@ -1,5 +1,8 @@
 package com.instaleap.movie.ui.detail
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,16 +54,24 @@ import com.instaleap.movie.ui.detail.DetailContract.EffectDetail
 import com.instaleap.movie.ui.detail.DetailContract.UiEventDetail
 import com.instaleap.movie.ui.detail.DetailContract.UiStateDetail
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun DetailMovieScreen(
     viewModel: DetailViewModel = hiltViewModel(),
     movieId: Int,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     navigateToBack: () -> Unit,
 ) {
     HandleState(viewModel, movieId, navigateToBack)
 
     val uiState by viewModel.uiState.collectAsState()
-    ContentMovieDetail(uiState, viewModel::onUiEvent)
+    ContentMovieDetail(
+        uiState = uiState,
+        onUiEvent = viewModel::onUiEvent,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedVisibilityScope = animatedVisibilityScope,
+    )
 }
 
 @Composable
@@ -82,10 +93,13 @@ private fun HandleState(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun ContentMovieDetail(
     uiState: UiStateDetail,
     onUiEvent: (UiEventDetail) -> Unit = {},
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val movie = uiState.movie ?: return
     if (uiState.isShowDialog) {
@@ -145,90 +159,46 @@ private fun ContentMovieDetail(
             onUiEvent(UiEventDetail.ToggleFavorite(movie))
         }
 
-        ElevatedCard(
-            modifier =
-                Modifier
-                    .padding(start = 16.dp)
-                    .constrainAs(poster) {
-                        top.linkTo(header.bottom)
-                        bottom.linkTo(header.bottom)
-                        start.linkTo(parent.start)
-                    },
-        ) {
-            LoaderImagePoster(movie.posterPath)
-        }
-
-        Column(
-            modifier =
-                Modifier
-                    .padding(all = 16.dp)
-                    .constrainAs(infoMovie) {
-                        top.linkTo(header.bottom)
-                        bottom.linkTo(poster.bottom)
-                        start.linkTo(poster.end)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                    },
-        ) {
-            Text(
-                text = movie.title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-            )
-
-            Row {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = "vote",
-                    tint = Color(0xFFFEB800),
-                )
-                Text(
-                    text = movie.voteAverage.toString(),
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    style = MaterialTheme.typography.labelSmall,
-                )
-            }
-
-            uiState.movieDetail?.genres?.let { genres ->
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(genres) {
-                        ItemGenre(it.name)
-                    }
-                }
-            }
-        }
-
-        uiState.movieDetail?.let {
-            Row(
+        with(sharedTransitionScope) {
+            ElevatedCard(
                 modifier =
                     Modifier
-                        .padding(all = 16.dp)
-                        .constrainAs(infoDetail) {
-                            top.linkTo(poster.bottom)
+                        .padding(start = 16.dp)
+                        .constrainAs(poster) {
+                            top.linkTo(header.bottom)
+                            bottom.linkTo(header.bottom)
                             start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            width = Dimension.fillToConstraints
-                        },
+                        }.sharedElement(
+                            rememberSharedContentState(key = "movie_${movie.id}"),
+                            animatedVisibilityScope,
+                        ),
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow(stringResource(R.string.label_runtime))
-                    ItemRow(it.runtime.toString())
-                }
-
-                Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow(stringResource(R.string.label_release_date))
-                    ItemRow(it.releaseDate)
-                }
-
-                Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow(stringResource(R.string.label_original_language))
-                    ItemRow(it.originalLanguage)
-                }
+                LoaderImagePoster(movie.posterPath)
             }
         }
+
+        ContentInfoMovie(
+            modifier =
+                Modifier.constrainAs(infoMovie) {
+                    top.linkTo(header.bottom)
+                    bottom.linkTo(poster.bottom)
+                    start.linkTo(poster.end)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                },
+            uiState,
+        )
+
+        ContentInfoDetail(
+            modifier =
+                Modifier.constrainAs(infoDetail) {
+                    top.linkTo(poster.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                },
+            uiState = uiState,
+        )
 
         Column(
             modifier =
@@ -245,6 +215,73 @@ private fun ContentMovieDetail(
             uiState.image?.backdrops?.let {
                 if (it.isNotEmpty()) {
                     ContentImage(it.map { it.filePath })
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ContentInfoDetail(
+    modifier: Modifier,
+    uiState: UiStateDetail,
+) {
+    uiState.movieDetail?.let {
+        Row(
+            modifier = modifier.padding(all = 16.dp),
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                ItemLabelRow(stringResource(R.string.label_runtime))
+                ItemRow(it.runtime.toString())
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
+                ItemLabelRow(stringResource(R.string.label_release_date))
+                ItemRow(it.releaseDate)
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
+                ItemLabelRow(stringResource(R.string.label_original_language))
+                ItemRow(it.originalLanguage)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ContentInfoMovie(
+    modifier: Modifier,
+    uiState: UiStateDetail,
+) {
+    Column(
+        modifier = modifier.padding(all = 16.dp),
+    ) {
+        Text(
+            text = uiState.movie?.title ?: "",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Row {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = Icons.Filled.Star,
+                contentDescription = "vote",
+                tint = Color(0xFFFEB800),
+            )
+            Text(
+                text = uiState.movie?.voteAverage.toString(),
+                modifier = Modifier.align(Alignment.CenterVertically),
+                style = MaterialTheme.typography.labelSmall,
+            )
+        }
+
+        uiState.movieDetail?.genres?.let { genres ->
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(genres) {
+                    ItemGenre(it.name)
                 }
             }
         }
@@ -280,11 +317,11 @@ private fun ContentOverview(movie: Movie) {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun ContentMovieDetailPreview() {
-    ContentMovieDetail(
+fun ContentInfoMoviePreview() {
+    ContentInfoMovie(
+        modifier = Modifier,
         uiState =
             UiStateDetail(
-                isLoading = false,
                 movie =
                     Movie(
                         id = 1,
@@ -304,7 +341,31 @@ fun ContentMovieDetailPreview() {
                         video = false,
                         releaseDate = "2024-07-24",
                     ),
-                image = null,
             ),
+    )
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun ContentOverviewPreview() {
+    ContentOverview(
+        Movie(
+            id = 1,
+            movieId = 1,
+            adult = false,
+            backdropPath = "/yDHYTfA3R0jFYba16jBB1ef8oIt.jpg",
+            genreIds = listOf(),
+            originalLanguage = "en",
+            title = "Deadpool y Lobezno",
+            overview = "overview",
+            isFavorite = false,
+            voteAverage = 5.0,
+            posterPath = "/9TFSqghEHrlBMRR63yTx80Orxva.jpg",
+            popularity = 5845.013,
+            voteCount = 7761,
+            originalTitle = "Deadpool & Wolverine",
+            video = false,
+            releaseDate = "2024-07-24",
+        ),
     )
 }

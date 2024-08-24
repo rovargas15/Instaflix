@@ -1,5 +1,8 @@
 package com.instaleap.movie.ui.movie
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,10 +29,13 @@ import com.instaleap.movie.R
 import com.instaleap.movie.ui.movie.MovieContract.EffectMovie
 import com.instaleap.movie.ui.movie.MovieContract.UiEventMovie
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MovieScreen(
     viewModel: MovieViewModel = hiltViewModel(),
     navigate: (Router) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     LaunchedEffect(Unit) {
         viewModel.fetchData()
@@ -43,13 +49,22 @@ fun MovieScreen(
         }
     }
     val uiState by viewModel.uiState.collectAsState()
-    ContentScreen(uiState, viewModel::onUiEvent)
+
+    ContentScreen(
+        uiState,
+        viewModel::onUiEvent,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedVisibilityScope = animatedVisibilityScope,
+    )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun ContentScreen(
     uiState: MovieContract.UiStateMovie,
     onUiEvent: (UiEventMovie) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     TopBarMovie(
         selected = Router.Movie,
@@ -71,7 +86,12 @@ fun ContentScreen(
                         title = stringResource(R.string.title_popular),
                         modifier = Modifier.padding(start = 10.dp),
                     )
-                    MovieList(uiState.listPopular, onUiEvent)
+                    MovieList(
+                        movies = uiState.listPopular,
+                        onUiEvent = onUiEvent,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
                 }
 
                 if (uiState.listTopRated.isNotEmpty()) {
@@ -79,7 +99,12 @@ fun ContentScreen(
                         title = stringResource(R.string.title_top_rated),
                         modifier = Modifier.padding(start = 10.dp),
                     )
-                    MovieList(uiState.listTopRated, onUiEvent)
+                    MovieList(
+                        movies = uiState.listTopRated,
+                        onUiEvent = onUiEvent,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
                 }
 
                 if (uiState.listUpcoming.isNotEmpty()) {
@@ -87,7 +112,12 @@ fun ContentScreen(
                         title = stringResource(R.string.title_upcoming),
                         modifier = Modifier.padding(start = 10.dp),
                     )
-                    MovieList(uiState.listUpcoming, onUiEvent)
+                    MovieList(
+                        movies = uiState.listUpcoming,
+                        onUiEvent = onUiEvent,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
                 }
             }
         },
@@ -97,21 +127,32 @@ fun ContentScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MovieList(
     movies: List<Movie>,
     onUiEvent: (UiEventMovie) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-    LazyRow(
-        modifier =
+    with(sharedTransitionScope) {
+        LazyRow(
             Modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        content = {
-            items(movies) { movie ->
-                ItemCard(movie.posterPath) {
-                    onUiEvent(UiEventMovie.Navigate(Router.DetailMovie(movie.id)))
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            content = {
+                items(movies) { movie ->
+                    ItemCard(
+                        modifier =
+                            Modifier.sharedElement(
+                                state = rememberSharedContentState(key = "movie_${movie.id}"),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                            ),
+                        posterPath = movie.posterPath,
+                    ) {
+                        onUiEvent(UiEventMovie.Navigate(Router.DetailMovie(movie.id)))
+                    }
                 }
-            }
-        },
-    )
+            },
+        )
+    }
 }

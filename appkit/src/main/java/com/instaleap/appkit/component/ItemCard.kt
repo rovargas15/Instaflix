@@ -10,19 +10,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-
 @Composable
 fun ItemCard(
+    modifier: Modifier = Modifier,
     posterPath: String,
     action: () -> Unit,
 ) {
     Card(
-        modifier = Modifier
-            .size(170.dp, 300.dp)
-            .padding(start = 10.dp)
-            .clickable {
-                action()
-            },
+        modifier =
+            modifier
+                .size(170.dp, 300.dp)
+                .padding(start = 10.dp)
+                .clickable {
+                    action()
+                },
     ) {
         Box {
             LoaderImage(posterPath, Modifier.fillMaxSize())

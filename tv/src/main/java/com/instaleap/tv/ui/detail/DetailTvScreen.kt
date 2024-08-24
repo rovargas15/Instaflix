@@ -149,77 +149,28 @@ private fun ContentTvDetail(
             LoaderImagePoster(tv.posterPath)
         }
 
-        Column(
+        ContentInfoTv(
             modifier =
-                Modifier
-                    .padding(all = 16.dp)
-                    .constrainAs(infoTv) {
-                        top.linkTo(header.bottom)
-                        bottom.linkTo(poster.bottom)
-                        start.linkTo(poster.end)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                    },
-        ) {
-            Text(
-                text = tv.name,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.SemiBold,
-            )
+                Modifier.constrainAs(infoTv) {
+                    top.linkTo(header.bottom)
+                    bottom.linkTo(poster.bottom)
+                    start.linkTo(poster.end)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                },
+            uiState = uiState,
+        )
 
-            Row {
-                Icon(
-                    modifier = Modifier.size(20.dp),
-                    imageVector = Icons.Filled.Star,
-                    contentDescription = "vote",
-                    tint = Color(0xFFFEB800),
-                )
-                Text(
-                    text = tv.voteAverage.toString(),
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    style = MaterialTheme.typography.labelSmall,
-                )
-            }
-
-            uiState.tvDetail?.genres?.let { genres ->
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    items(genres) {
-                        ItemGenre(it.name)
-                    }
-                }
-            }
-        }
-
-        Row(
+        ContentInfoDetail(
             modifier =
-                Modifier
-                    .padding(all = 16.dp)
-                    .constrainAs(infoDetail) {
-                        top.linkTo(poster.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                    },
-        ) {
-            uiState.tvDetail?.let {
-                Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow(stringResource(R.string.label_first_air_date))
-                    ItemRow(it.firstAirDate)
-                }
-
-                Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow(stringResource(R.string.label_status))
-                    ItemRow(it.status)
-                }
-
-                Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow(stringResource(R.string.label_original_languaje))
-                    ItemRow(it.originalLanguage)
-                }
-            }
-        }
+                Modifier.constrainAs(infoDetail) {
+                    top.linkTo(poster.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                },
+            uiState = uiState,
+        )
 
         Column(
             modifier =
@@ -236,6 +187,75 @@ private fun ContentTvDetail(
             uiState.image?.backdrops?.let {
                 if (it.isNotEmpty()) {
                     ContentImage(it.map { it.filePath })
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ContentInfoDetail(
+    modifier: Modifier,
+    uiState: UiStateDetail,
+) {
+    Row(
+        modifier = modifier.padding(all = 16.dp),
+    ) {
+        uiState.tvDetail?.let {
+            Column(modifier = Modifier.weight(1f)) {
+                ItemLabelRow(stringResource(R.string.label_first_air_date))
+                ItemRow(it.firstAirDate)
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
+                ItemLabelRow(stringResource(R.string.label_status))
+                ItemRow(it.status)
+            }
+
+            Column(modifier = Modifier.weight(1f)) {
+                ItemLabelRow(stringResource(R.string.label_original_languaje))
+                ItemRow(it.originalLanguage)
+            }
+        }
+    }
+}
+
+@Composable
+private fun ContentInfoTv(
+    modifier: Modifier,
+    uiState: UiStateDetail,
+) {
+    Column(
+        modifier =
+            modifier
+                .padding(all = 16.dp),
+    ) {
+        Text(
+            text = uiState.tv?.name ?: "",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
+        )
+
+        Row {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = Icons.Filled.Star,
+                contentDescription = "vote",
+                tint = Color(0xFFFEB800),
+            )
+            Text(
+                text = uiState.tvDetail?.voteAverage.toString(),
+                modifier = Modifier.align(Alignment.CenterVertically),
+                style = MaterialTheme.typography.labelSmall,
+            )
+        }
+
+        uiState.tvDetail?.genres?.let { genres ->
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(genres) {
+                    ItemGenre(it.name)
                 }
             }
         }

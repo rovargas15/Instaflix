@@ -61,10 +61,10 @@ fun ContentScreen(
 
             Column(
                 modifier =
-                    Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 if (uiState.listPopular.isNotEmpty()) {
@@ -108,7 +108,7 @@ fun TvList(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         content = {
             items(tv) { tv ->
-                ItemCard(tv.posterPath) {
+                ItemCard(posterPath = tv.posterPath) {
                     onUiEvent(UiEventTv.Navigate(Router.DetailTv(tv.id)))
                 }
             }
