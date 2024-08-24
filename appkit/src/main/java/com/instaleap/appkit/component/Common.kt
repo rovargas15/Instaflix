@@ -9,8 +9,9 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.instaleap.appkit.R
+import com.instaleap.appkit.theme.paddingXMedium
+import com.instaleap.appkit.theme.paddingXSmall
 
 @Composable
 fun ContentImage(images: List<String>?) {
@@ -20,8 +21,8 @@ fun ContentImage(images: List<String>?) {
         )
 
         LazyRow(
-            modifier = Modifier.padding(bottom = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(bottom = paddingXMedium),
+            horizontalArrangement = Arrangement.spacedBy(paddingXSmall),
         ) {
             items(it) { image ->
                 ElevatedCard {

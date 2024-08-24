@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
+import com.instaleap.appkit.theme.size35
 
 @Composable
 fun NavImageIcon(
@@ -25,7 +25,7 @@ fun NavImageIcon(
         Icon(
             modifier =
                 Modifier
-                    .size(35.dp)
+                    .size(size35)
                     .background(Color.LightGray.copy(0.2f), shape = CircleShape),
             imageVector = icon,
             tint = tint,

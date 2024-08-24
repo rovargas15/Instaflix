@@ -18,6 +18,9 @@ interface TvDao {
     @Query("SELECT * FROM TvEntity WHERE isFavorite = 1")
     fun getAllAsFlow(): Flow<List<TvEntity>>
 
+    @Query("SELECT * FROM TvEntity")
+    fun getAll(): Flow<List<TvEntity>>
+
     @Query("UPDATE TvEntity SET isFavorite=:isFavorite WHERE id = :id")
     suspend fun updateTv(
         isFavorite: Boolean,

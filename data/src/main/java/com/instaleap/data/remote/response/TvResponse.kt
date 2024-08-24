@@ -59,5 +59,6 @@ data class TvResponse(
             voteAverage = voteAverage,
             voteCount = voteCount,
             isFavorite = false,
+            category = "",
         )
 }

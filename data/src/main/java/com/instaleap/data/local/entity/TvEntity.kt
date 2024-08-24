@@ -41,5 +41,6 @@ data class TvEntity(
             firstAirDate = firstAirDate,
             originalName = originalName,
             originCountry = originCountry,
+            category = category,
         )
 }

@@ -9,6 +9,7 @@ interface MovieContract {
         val listPopular: List<Movie> = emptyList(),
         val listTopRated: List<Movie> = emptyList(),
         val listUpcoming: List<Movie> = emptyList(),
+        val isError: Boolean = false,
     )
 
     sealed class UiEventMovie {

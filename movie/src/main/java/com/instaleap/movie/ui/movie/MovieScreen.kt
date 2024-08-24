@@ -11,15 +11,21 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.instaleap.appkit.component.ItemCard
+import com.instaleap.appkit.component.SnackBarError
 import com.instaleap.appkit.component.TextCategory
 import com.instaleap.appkit.component.TopBarMovie
 import com.instaleap.core.CollectEffects
@@ -37,6 +43,22 @@ fun MovieScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
+    HandleEvent(viewModel = viewModel, navigate = navigate)
+    val uiState by viewModel.uiState.collectAsState()
+
+    ContentScreen(
+        uiState,
+        viewModel::onUiEvent,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedVisibilityScope = animatedVisibilityScope,
+    )
+}
+
+@Composable
+private fun HandleEvent(
+    viewModel: MovieViewModel,
+    navigate: (Router) -> Unit,
+) {
     LaunchedEffect(Unit) {
         viewModel.fetchData()
     }
@@ -48,14 +70,6 @@ fun MovieScreen(
             }
         }
     }
-    val uiState by viewModel.uiState.collectAsState()
-
-    ContentScreen(
-        uiState,
-        viewModel::onUiEvent,
-        sharedTransitionScope = sharedTransitionScope,
-        animatedVisibilityScope = animatedVisibilityScope,
-    )
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -66,6 +80,12 @@ fun ContentScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    if (uiState.isError) {
+        SnackBarError(state = snackbarHostState)
+    }
+
     TopBarMovie(
         selected = Router.Movie,
         content = { innerPadding ->
@@ -123,6 +143,16 @@ fun ContentScreen(
         },
         router = {
             onUiEvent(UiEventMovie.Navigate(it))
+        },
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState) {
+                Snackbar(
+                    snackbarData = it,
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    actionColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.tertiary,
+                )
+            }
         },
     )
 }

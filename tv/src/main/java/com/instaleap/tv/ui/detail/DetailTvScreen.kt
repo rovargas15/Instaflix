@@ -6,6 +6,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,10 +32,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,6 +48,11 @@ import com.instaleap.appkit.component.LoaderImage
 import com.instaleap.appkit.component.LoaderImagePoster
 import com.instaleap.appkit.component.NavImageIcon
 import com.instaleap.appkit.component.TextCategory
+import com.instaleap.appkit.theme.paddingMedium
+import com.instaleap.appkit.theme.paddingXLarge
+import com.instaleap.appkit.theme.paddingXMedium
+import com.instaleap.appkit.theme.paddingXSmall
+import com.instaleap.appkit.theme.size350
 import com.instaleap.core.CollectEffects
 import com.instaleap.core.route.Router
 import com.instaleap.domain.model.Tv
@@ -113,7 +119,7 @@ private fun ContentTvDetail(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(350.dp)
+                    .height(size350)
                     .constrainAs(header) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
@@ -124,10 +130,9 @@ private fun ContentTvDetail(
         NavImageIcon(
             modifier =
                 Modifier
-                    .padding(16.dp)
                     .constrainAs(btnBack) {
-                        top.linkTo(header.top)
-                        start.linkTo(parent.start)
+                        top.linkTo(parent.top, paddingXLarge)
+                        start.linkTo(parent.start, paddingMedium)
                     },
             icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
         ) {
@@ -137,10 +142,9 @@ private fun ContentTvDetail(
         NavImageIcon(
             modifier =
                 Modifier
-                    .padding(16.dp)
                     .constrainAs(btnFavorite) {
-                        top.linkTo(header.top)
-                        end.linkTo(parent.end)
+                        top.linkTo(parent.top, paddingXLarge)
+                        end.linkTo(parent.end, paddingMedium)
                     },
             icon =
                 if (tv.isFavorite) {
@@ -157,7 +161,11 @@ private fun ContentTvDetail(
             ElevatedCard(
                 modifier =
                     Modifier
-                        .padding(start = 16.dp)
+                        .padding(start = dimensionResource(id = com.instaleap.appkit.R.dimen.padding_medium))
+                        .defaultMinSize(
+                            minWidth = dimensionResource(id = com.instaleap.appkit.R.dimen.with_poster),
+                            minHeight = dimensionResource(id = com.instaleap.appkit.R.dimen.height_poster),
+                        ).fillMaxWidth(0.4f)
                         .constrainAs(poster) {
                             top.linkTo(header.bottom)
                             bottom.linkTo(header.bottom)
@@ -197,7 +205,7 @@ private fun ContentTvDetail(
         Column(
             modifier =
                 Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = paddingMedium)
                     .constrainAs(overview) {
                         top.linkTo(infoDetail.bottom)
                         start.linkTo(parent.start)
@@ -221,7 +229,7 @@ private fun ContentInfoDetail(
     uiState: UiStateDetail,
 ) {
     Row(
-        modifier = modifier.padding(all = 16.dp),
+        modifier = modifier.padding(all = paddingMedium),
     ) {
         uiState.tvDetail?.let {
             Column(modifier = Modifier.weight(1f)) {
@@ -250,7 +258,7 @@ private fun ContentInfoTv(
     Column(
         modifier =
             modifier
-                .padding(all = 16.dp),
+                .padding(all = paddingMedium),
     ) {
         Text(
             text = uiState.tv?.name ?: "",
@@ -260,7 +268,7 @@ private fun ContentInfoTv(
 
         Row {
             Icon(
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(paddingXMedium),
                 imageVector = Icons.Filled.Star,
                 contentDescription = "vote",
                 tint = Color(0xFFFEB800),
@@ -274,7 +282,7 @@ private fun ContentInfoTv(
 
         uiState.tvDetail?.genres?.let { genres ->
             LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(paddingXSmall),
             ) {
                 items(genres) {
                     ItemGenre(it.name)
@@ -331,6 +339,7 @@ fun ContentTvDetailPreview() {
                 voteAverage = 8.4,
                 voteCount = 11798,
                 isFavorite = false,
+                category = "tv",
             ),
     )
 }

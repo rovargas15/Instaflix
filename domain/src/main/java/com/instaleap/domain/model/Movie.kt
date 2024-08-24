@@ -17,4 +17,5 @@ data class Movie(
     val voteAverage: Double,
     val voteCount: Int,
     var isFavorite: Boolean,
+    val category: String,
 )

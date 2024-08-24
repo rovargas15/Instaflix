@@ -42,5 +42,6 @@ data class MovieEntity(
             voteAverage = voteAverage,
             voteCount = voteCount,
             isFavorite = isFavorite == 1,
+            category = category,
         )
 }

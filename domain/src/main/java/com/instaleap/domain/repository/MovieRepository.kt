@@ -23,4 +23,6 @@ interface MovieRepository {
         pageSize: Int,
         page: Int,
     ): Result<DataBase<Movie>>
+
+    suspend fun getAllCache(): Flow<List<Movie>>
 }

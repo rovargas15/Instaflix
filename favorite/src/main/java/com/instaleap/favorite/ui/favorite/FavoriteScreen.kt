@@ -22,11 +22,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.instaleap.appkit.component.ItemCard
 import com.instaleap.appkit.component.TextCategory
 import com.instaleap.appkit.component.TopBarMovie
+import com.instaleap.appkit.theme.paddingLarge
+import com.instaleap.appkit.theme.paddingMedium
+import com.instaleap.appkit.theme.paddingSmall
+import com.instaleap.appkit.theme.paddingXSmall
+import com.instaleap.appkit.theme.paddingXXSmall
 import com.instaleap.core.CollectEffects
 import com.instaleap.core.route.Router
 import com.instaleap.domain.model.Movie
@@ -87,12 +91,12 @@ fun ContentScreen(
                             .padding(innerPadding)
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalArrangement = Arrangement.spacedBy(paddingSmall),
                 ) {
                     if (uiState.listMovies.isNotEmpty()) {
                         TextCategory(
                             title = stringResource(R.string.title_movie),
-                            modifier = Modifier.padding(start = 10.dp),
+                            modifier = Modifier.padding(start = paddingSmall),
                         )
                         MovieList(
                             movies = uiState.listMovies,
@@ -105,7 +109,7 @@ fun ContentScreen(
                     if (uiState.listTvs.isNotEmpty()) {
                         TextCategory(
                             title = stringResource(R.string.title_tv),
-                            modifier = Modifier.padding(start = 10.dp),
+                            modifier = Modifier.padding(start = paddingSmall),
                         )
                         TvList(
                             tv = uiState.listTvs,
@@ -128,27 +132,27 @@ fun EmptyFavoritesScreen() {
     Column(
         modifier =
             Modifier
-                .padding(16.dp),
+                .padding(paddingMedium),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = stringResource(R.string.title_msg_empty),
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 16.dp),
+            modifier = Modifier.padding(bottom = paddingMedium),
         )
 
         Text(
             text = stringResource(R.string.label_instructional_text),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 24.dp),
+            modifier = Modifier.padding(bottom = paddingLarge),
         )
 
         Text(
             text = stringResource(R.string.label_How_to_message),
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(bottom = 8.dp),
+            modifier = Modifier.padding(bottom = paddingXSmall),
         )
 
         Text(
@@ -171,7 +175,7 @@ fun MovieList(
         LazyRow(
             modifier =
                 Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(paddingXXSmall),
             content = {
                 items(movies) { movie ->
                     ItemCard(
@@ -202,7 +206,7 @@ fun TvList(
         LazyRow(
             modifier =
                 Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(paddingXXSmall),
             content = {
                 items(tv) { tv ->
                     ItemCard(

@@ -1,6 +1,5 @@
 package com.instaleap.domain.model
 
-
 data class Tv(
     val adult: Boolean,
     val backdropPath: String,
@@ -17,4 +16,5 @@ data class Tv(
     val voteAverage: Double,
     val voteCount: Int,
     var isFavorite: Boolean,
+    var category: String,
 )

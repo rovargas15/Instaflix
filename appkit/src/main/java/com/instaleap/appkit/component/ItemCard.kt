@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.instaleap.appkit.theme.paddingSmall
+import com.instaleap.appkit.theme.size170
+import com.instaleap.appkit.theme.size300
 
 @Composable
 fun ItemCard(
@@ -19,8 +21,8 @@ fun ItemCard(
     Card(
         modifier =
             modifier
-                .size(170.dp, 300.dp)
-                .padding(start = 10.dp)
+                .size(size170, size300)
+                .padding(start = paddingSmall)
                 .clickable {
                     action()
                 },

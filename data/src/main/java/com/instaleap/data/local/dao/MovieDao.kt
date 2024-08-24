@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(items: List<MovieEntity>)
 
@@ -19,6 +18,12 @@ interface MovieDao {
     @Query("SELECT * FROM MovieEntity WHERE isFavorite = 1")
     fun getAllAsFlow(): Flow<List<MovieEntity>>
 
+    @Query("SELECT * FROM MovieEntity")
+    fun getAll(): Flow<List<MovieEntity>>
+
     @Query("UPDATE MovieEntity SET isFavorite=:isFavorite WHERE movieId = :id")
-    suspend fun updateMovie(isFavorite: Boolean, id: Int): Int
+    suspend fun updateMovie(
+        isFavorite: Boolean,
+        id: Int,
+    ): Int
 }

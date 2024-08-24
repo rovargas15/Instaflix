@@ -13,59 +13,66 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class MovieRepositoryImpl @Inject constructor(
-    private val dataSourceRemote: MovieDataSource,
-    private val db: InstaflixDatabase,
-) : BaseRepository(),
-    MovieRepository {
-    override suspend fun getMovies(category: String): Result<DataBase<Movie>> =
-        launchResultSafe {
-            saveMovies(dataSourceRemote.getMovies(category), category)
+class MovieRepositoryImpl
+    @Inject
+    constructor(
+        private val dataSourceRemote: MovieDataSource,
+        private val db: InstaflixDatabase,
+    ) : BaseRepository(),
+        MovieRepository {
+        override suspend fun getMovies(category: String): Result<DataBase<Movie>> =
+            launchResultSafe {
+                saveMovies(dataSourceRemote.getMovies(category), category)
+            }
+
+        override suspend fun getMovieById(id: Int): Flow<Movie> =
+            db.movieDao().getMovieById(id).map { resultsChange -> resultsChange.toDomain() }
+
+        override suspend fun getMovieDetailById(id: Int): Result<MovieDetail> =
+            launchResultSafe {
+                dataSourceRemote.getMovieById(id).toDomain()
+            }
+
+        override suspend fun getSearchMovie(query: String): Result<DataBase<Movie>> =
+            launchResultSafe {
+                saveMovies(dataSourceRemote.getMoviesByQuery(query))
+            }
+
+        override suspend fun getFavoriteMovie(): Flow<List<Movie>> =
+            db.movieDao().getAllAsFlow().map { resultsChange ->
+                resultsChange.map { it.toDomain() }
+            }
+
+        override suspend fun updateMovie(movie: Movie) {
+            db.movieDao().updateMovie(movie.isFavorite, movie.id)
         }
 
-    override suspend fun getMovieById(id: Int): Flow<Movie> =
-        db.movieDao().getMovieById(id).map { resultsChange -> resultsChange.toDomain() }
+        override suspend fun getPaginatedMovies(
+            category: String,
+            pageSize: Int,
+            page: Int,
+        ): Result<DataBase<Movie>> =
+            launchResultSafe {
+                saveMovies(dataSourceRemote.getMovies(category, page), category)
+            }
 
-    override suspend fun getMovieDetailById(id: Int): Result<MovieDetail> =
-        launchResultSafe {
-            dataSourceRemote.getMovieById(id).toDomain()
+        override suspend fun getAllCache() =
+            db.movieDao().getAll().map { resultsChange ->
+                resultsChange.map { it.toDomain() }
+            }
+
+        private suspend fun saveMovies(
+            response: BaseResponse<MovieResponse>,
+            category: String = "",
+        ): DataBase<Movie> {
+            response.results.map { it.toEntity(category) }.also { movies ->
+                db.movieDao().insertAll(movies)
+            }
+            return DataBase(
+                page = response.page,
+                results = response.results.map { it.toDomain() },
+                totalPages = response.totalPages,
+                totalResults = response.totalResults,
+            )
         }
-
-    override suspend fun getSearchMovie(query: String): Result<DataBase<Movie>> =
-        launchResultSafe {
-            saveMovies(dataSourceRemote.getMoviesByQuery(query))
-        }
-
-    override suspend fun getFavoriteMovie(): Flow<List<Movie>> =
-        db.movieDao().getAllAsFlow().map { resultsChange ->
-            resultsChange.map { it.toDomain() }
-        }
-
-    override suspend fun updateMovie(movie: Movie) {
-        db.movieDao().updateMovie(movie.isFavorite, movie.id)
     }
-
-    override suspend fun getPaginatedMovies(
-        category: String,
-        pageSize: Int,
-        page: Int,
-    ): Result<DataBase<Movie>> =
-        launchResultSafe {
-            saveMovies(dataSourceRemote.getMovies(category, page), category)
-        }
-
-    private suspend fun saveMovies(
-        response: BaseResponse<MovieResponse>,
-        category: String = "",
-    ): DataBase<Movie> {
-        response.results.map { it.toEntity(category) }.also { movies ->
-            db.movieDao().insertAll(movies)
-        }
-        return DataBase(
-            page = response.page,
-            results = response.results.map { it.toDomain() },
-            totalPages = response.totalPages,
-            totalResults = response.totalResults,
-        )
-    }
-}

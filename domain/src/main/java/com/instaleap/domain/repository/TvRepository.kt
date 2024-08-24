@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface TvRepository {
     suspend fun getTvByCategory(category: String): Result<DataBase<Tv>>
 
+    suspend fun getTvByCategoryCache(): Flow<List<Tv>>
+
     suspend fun getTvById(id: Int): Flow<Tv>
 
     suspend fun getTvDetailById(id: Int): Result<TvDetail>

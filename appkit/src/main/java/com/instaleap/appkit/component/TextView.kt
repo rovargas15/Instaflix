@@ -14,8 +14,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.instaleap.appkit.theme.paddingSmall
+import com.instaleap.appkit.theme.paddingXSmall
 
 @Composable
 fun TextCategory(
@@ -23,7 +24,7 @@ fun TextCategory(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        modifier = modifier.padding(top = 12.dp, bottom = 12.dp),
+        modifier = modifier.padding(top = paddingSmall, bottom = paddingSmall),
         text = title,
         style = TextStyle().copy(fontSize = 18.sp, fontWeight = FontWeight.SemiBold),
     )
@@ -57,7 +58,7 @@ fun ItemGenre(genre: String) {
         Text(
             text = genre,
             style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(paddingXSmall),
         )
     }
 }

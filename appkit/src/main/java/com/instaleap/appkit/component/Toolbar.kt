@@ -18,9 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.instaleap.appkit.R
 import com.instaleap.appkit.theme.RedLevel03
+import com.instaleap.appkit.theme.paddingMedium
 import com.instaleap.core.route.MenuItem
 import com.instaleap.core.route.Router
 
@@ -29,6 +29,7 @@ import com.instaleap.core.route.Router
 fun TopBarMovie(
     content: @Composable (PaddingValues) -> Unit,
     router: (Router) -> Unit,
+    snackbarHost: @Composable () -> Unit = {},
     selected: Router,
 ) {
     Scaffold(
@@ -37,7 +38,7 @@ fun TopBarMovie(
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Row(
                         modifier =
-                            Modifier.padding(horizontal = 16.dp),
+                            Modifier.padding(horizontal = paddingMedium),
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
                         Image(
@@ -62,5 +63,8 @@ fun TopBarMovie(
         bottomBar = {
         },
         content = content,
+        snackbarHost = {
+            snackbarHost()
+        },
     )
 }

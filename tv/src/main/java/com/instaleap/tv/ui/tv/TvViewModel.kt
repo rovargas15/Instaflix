@@ -1,9 +1,11 @@
 package com.instaleap.tv.ui.tv
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.instaleap.core.MviViewModel
 import com.instaleap.core.route.Category
+import com.instaleap.domain.model.DataBase
+import com.instaleap.domain.model.Tv
+import com.instaleap.domain.usecase.GetAllTv
 import com.instaleap.domain.usecase.GetTvByCategory
 import com.instaleap.tv.ui.tv.TvContract.EffectTv
 import com.instaleap.tv.ui.tv.TvContract.UiEventTv
@@ -17,6 +19,7 @@ class TvViewModel
     @Inject
     constructor(
         private val getTvByCategory: GetTvByCategory,
+        private val getAllTv: GetAllTv,
         private val coroutineDispatcher: CoroutineDispatcher,
     ) : MviViewModel<TvContract.UiStateTv, UiEventTv, EffectTv>() {
         private val categories = listOf(Category.POPULAR, Category.TOP_RATED, Category.ON_THE_AIR)
@@ -31,39 +34,64 @@ class TvViewModel
                 categories.forEach { category ->
                     getTvByCategory.invoke(category).fold(
                         onSuccess = {
-                            when (category) {
-                                Category.POPULAR -> {
-                                    updateState {
-                                        copy(
-                                            listPopular = it.results,
-                                        )
-                                    }
-                                }
-
-                                Category.TOP_RATED -> {
-                                    updateState {
-                                        copy(
-                                            listTopRated = it.results,
-                                        )
-                                    }
-                                }
-
-                                Category.ON_THE_AIR -> {
-                                    updateState {
-                                        copy(
-                                            listOnTheAir = it.results,
-                                        )
-                                    }
-                                }
-                            }
+                            handleSuccess(category, it)
                         },
                         onFailure = {
-                            Log.e("MovieViewModel", "getMovies: $it")
+                            handleError()
                         },
                     )
                 }
                 updateState {
                     copy(isLoading = false)
+                }
+            }
+        }
+
+        private fun handleError() {
+            updateState {
+                copy(isError = true)
+            }
+            viewModelScope.launch(coroutineDispatcher) {
+                getAllTv.invoke().collect {
+                    updateState {
+                        copy(
+                            listPopular = it.filter { it.category == Category.POPULAR },
+                            listTopRated = it.filter { it.category == Category.TOP_RATED },
+                            listOnTheAir = it.filter { it.category == Category.ON_THE_AIR },
+                            isError = false,
+                        )
+                    }
+                }
+            }
+        }
+
+        private fun handleSuccess(
+            category: String,
+            dataBase: DataBase<Tv>,
+        ) {
+            when (category) {
+                Category.POPULAR -> {
+                    updateState {
+                        copy(
+                            listPopular = dataBase.results,
+                        )
+                    }
+                }
+
+                Category.TOP_RATED -> {
+                    updateState {
+                        copy(
+                            listTopRated = dataBase.results,
+                        )
+                    }
+                }
+
+                Category.ON_THE_AIR -> {
+                    updateState {
+                        copy(
+                            listOnTheAir = dataBase.results,
+                        )
+                    }
                 }
             }
         }
