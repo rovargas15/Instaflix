@@ -2,7 +2,6 @@ package com.instaleap.tv.ui.detail
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.instaleap.appkit.component.ContentImage
 import com.instaleap.appkit.component.ItemGenre
 import com.instaleap.appkit.component.ItemLabelRow
 import com.instaleap.appkit.component.ItemRow
@@ -44,7 +44,6 @@ import com.instaleap.appkit.component.LoaderImagePoster
 import com.instaleap.appkit.component.NavImageIcon
 import com.instaleap.appkit.component.TextCategory
 import com.instaleap.core.CollectEffects
-import com.instaleap.domain.model.Image
 import com.instaleap.domain.model.Tv
 import com.instaleap.tv.R
 import com.instaleap.tv.ui.detail.DetailContract.EffectDetail
@@ -231,7 +230,11 @@ private fun ContentTvDetail(
                     },
         ) {
             ContentOverview(uiState.tv)
-            ContentImage(uiState.image)
+            uiState.image?.backdrops?.let {
+                if (it.isNotEmpty()) {
+                    ContentImage(it.map { it.filePath })
+                }
+            }
         }
     }
 }
@@ -240,37 +243,11 @@ private fun ContentTvDetail(
 fun ContentOverview(tv: Tv) {
     TextCategory(
         stringResource(R.string.title_description),
-        modifier = Modifier.padding(bottom = 8.dp),
     )
     Text(
         text = tv.overview.ifEmpty { stringResource(R.string.no_overview) },
         style = MaterialTheme.typography.bodySmall,
     )
-}
-
-@Composable
-fun ContentImage(images: Image?) {
-    images?.let {
-        Text(
-            stringResource(R.string.title_image),
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(horizontal = 12.dp),
-        )
-
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(it.backdrops) { image ->
-                ElevatedCard {
-                    LoaderImagePoster(
-                        url = image.filePath,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                }
-            }
-        }
-    }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
