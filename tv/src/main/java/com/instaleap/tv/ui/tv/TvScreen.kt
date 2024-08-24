@@ -49,13 +49,21 @@ fun TvScreen(
         }
     }
     val uiState by viewModel.uiState.collectAsState()
-    ContentScreen(uiState, viewModel::onUiEvent)
+    ContentScreen(
+        uiState = uiState,
+        onUiEvent = viewModel::onUiEvent,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedVisibilityScope = animatedVisibilityScope,
+    )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun ContentScreen(
     uiState: TvContract.UiStateTv,
     onUiEvent: (UiEventTv) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     TopBarMovie(
         selected = Router.Tv,
@@ -78,7 +86,12 @@ fun ContentScreen(
                         title = stringResource(R.string.title_popular),
                         modifier = Modifier.padding(start = 10.dp),
                     )
-                    TvList(uiState.listPopular, onUiEvent)
+                    TvList(
+                        tv = uiState.listPopular,
+                        onUiEvent = onUiEvent,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
                 }
 
                 if (uiState.listTopRated.isNotEmpty()) {
@@ -86,7 +99,12 @@ fun ContentScreen(
                         title = stringResource(R.string.title_top_rated),
                         modifier = Modifier.padding(start = 10.dp),
                     )
-                    TvList(uiState.listTopRated, onUiEvent)
+                    TvList(
+                        tv = uiState.listTopRated,
+                        onUiEvent = onUiEvent,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
                 }
 
                 if (uiState.listOnTheAir.isNotEmpty()) {
@@ -94,7 +112,12 @@ fun ContentScreen(
                         title = stringResource(R.string.title_on_the_air),
                         modifier = Modifier.padding(start = 10.dp),
                     )
-                    TvList(uiState.listOnTheAir, onUiEvent)
+                    TvList(
+                        tv = uiState.listOnTheAir,
+                        onUiEvent = onUiEvent,
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                    )
                 }
             }
         },
@@ -104,20 +127,32 @@ fun ContentScreen(
     )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun TvList(
     tv: List<Tv>,
     onUiEvent: (UiEventTv) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-    LazyRow(
-        modifier = Modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        content = {
-            items(tv) { tv ->
-                ItemCard(posterPath = tv.posterPath) {
-                    onUiEvent(UiEventTv.Navigate(Router.DetailTv(tv.id)))
+    with(sharedTransitionScope) {
+        LazyRow(
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            content = {
+                items(tv) { tv ->
+                    ItemCard(
+                        posterPath = tv.posterPath,
+                        modifier =
+                            Modifier.sharedElement(
+                                state = rememberSharedContentState(key = "tv_${tv.id}"),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                            ),
+                    ) {
+                        onUiEvent(UiEventTv.Navigate(Router.DetailTv(tv.id)))
+                    }
                 }
-            }
-        },
-    )
+            },
+        )
+    }
 }

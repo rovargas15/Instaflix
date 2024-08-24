@@ -76,13 +76,21 @@ fun DetailTvScreen(
     }
 
     val uiState by viewModel.uiState.collectAsState()
-    ContentTvDetail(uiState, viewModel::onUiEvent)
+    ContentTvDetail(
+        uiState = uiState,
+        onUiEvent = viewModel::onUiEvent,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedVisibilityScope = animatedVisibilityScope,
+    )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun ContentTvDetail(
     uiState: UiStateDetail,
     onUiEvent: (UiEventDetail) -> Unit = {},
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val tv = uiState.tv ?: return
     if (uiState.isShowDialog) {
@@ -142,17 +150,22 @@ private fun ContentTvDetail(
             onUiEvent(UiEventDetail.ToggleFavorite(tv))
         }
 
-        ElevatedCard(
-            modifier =
-                Modifier
-                    .padding(start = 16.dp)
-                    .constrainAs(poster) {
-                        top.linkTo(header.bottom)
-                        bottom.linkTo(header.bottom)
-                        start.linkTo(parent.start)
-                    },
-        ) {
-            LoaderImagePoster(tv.posterPath)
+        with(sharedTransitionScope) {
+            ElevatedCard(
+                modifier =
+                    Modifier
+                        .padding(start = 16.dp)
+                        .constrainAs(poster) {
+                            top.linkTo(header.bottom)
+                            bottom.linkTo(header.bottom)
+                            start.linkTo(parent.start)
+                        }.sharedElement(
+                            rememberSharedContentState(key = "tv_${tv.id}"),
+                            animatedVisibilityScope,
+                        ),
+            ) {
+                LoaderImagePoster(tv.posterPath)
+            }
         }
 
         ContentInfoTv(
@@ -297,29 +310,24 @@ fun ContentOverview(tv: Tv) {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun ContentTvDetailPreview() {
-    ContentTvDetail(
-        uiState =
-            UiStateDetail(
-                isLoading = false,
-                tv =
-                    Tv(
-                        adult = false,
-                        backdropPath = "/suopoADq0k8YZr4dQXcU6pToj6s.jpg",
-                        firstAirDate = "2011-04-17",
-                        genreIds = listOf(10765, 18, 80),
-                        id = 1399,
-                        name = "Game of Thrones",
-                        originCountry = listOf("US"),
-                        originalLanguage = "en",
-                        originalName = "Game of Thrones",
-                        overview = "Seven noble families fight for control of the mythical land of Westeros. Friction between the houses leads to full-scale war. All while a very ancient evil awakens in the farthest north. Amidst the war, a neglected military order of misfits, the Night's Watch, is all that stands between the realms of men and icy horrors beyond.",
-                        popularity = 266.371,
-                        posterPath = "/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg",
-                        voteAverage = 8.4,
-                        voteCount = 11798,
-                        isFavorite = false,
-                    ),
-                image = null,
+    ContentOverview(
+        tv =
+            Tv(
+                adult = false,
+                backdropPath = "/suopoADq0k8YZr4dQXcU6pToj6s.jpg",
+                firstAirDate = "2011-04-17",
+                genreIds = listOf(10765, 18, 80),
+                id = 1399,
+                name = "Game of Thrones",
+                originCountry = listOf("US"),
+                originalLanguage = "en",
+                originalName = "Game of Thrones",
+                overview = "Seven noble families fight for control of the mythical land of Westeros. Friction between the houses leads to full-scale war. All while a very ancient evil awakens in the farthest north. Amidst the war, a neglected military order of misfits, the Night's Watch, is all that stands between the realms of men and icy horrors beyond.",
+                popularity = 266.371,
+                posterPath = "/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg",
+                voteAverage = 8.4,
+                voteCount = 11798,
+                isFavorite = false,
             ),
     )
 }
