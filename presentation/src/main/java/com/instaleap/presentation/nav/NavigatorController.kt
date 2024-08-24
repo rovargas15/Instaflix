@@ -75,12 +75,18 @@ fun NavGraphBuilder.tv(
     sharedTransitionScope: SharedTransitionScope,
 ) {
     composable<Router.Tv> {
-        TvScreen(navigate = navController::navigate)
+        TvScreen(
+            navigate = navController::navigate,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = this@composable,
+        )
     }
 
     composable<Router.DetailTv> {
         DetailTvScreen(
             tvId = it.toRoute<Router.DetailTv>().id,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = this@composable,
             navigateToBack = {
                 navController.navigateUp()
             },
@@ -93,6 +99,10 @@ fun NavGraphBuilder.favorite(
     sharedTransitionScope: SharedTransitionScope,
 ) {
     composable<Router.Favorite> {
-        FavoriteScreen(navigate = navController::navigate)
+        FavoriteScreen(
+            navigate = navController::navigate,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = this@composable,
+        )
     }
 }

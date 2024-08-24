@@ -1,5 +1,8 @@
 package com.instaleap.favorite.ui.favorite
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,10 +34,13 @@ import com.instaleap.domain.model.Tv
 import com.instaleap.favorite.R
 import com.instaleap.favorite.ui.favorite.FavoriteContract.UiEvent
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun FavoriteScreen(
     viewModel: FavoriteViewModel = hiltViewModel(),
     navigate: (Router) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     LaunchedEffect(Unit) {
         viewModel.fetchData()
@@ -48,13 +54,21 @@ fun FavoriteScreen(
         }
     }
     val uiState by viewModel.uiState.collectAsState()
-    ContentScreen(uiState, viewModel::onUiEvent)
+    ContentScreen(
+        uiState = uiState,
+        onUiEvent = viewModel::onUiEvent,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedVisibilityScope = animatedVisibilityScope,
+    )
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun ContentScreen(
     uiState: FavoriteContract.UiState,
     onUiEvent: (UiEvent) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     TopBarMovie(
         selected = Router.Favorite,
@@ -80,7 +94,12 @@ fun ContentScreen(
                             title = stringResource(R.string.title_movie),
                             modifier = Modifier.padding(start = 10.dp),
                         )
-                        MovieList(uiState.listMovies, onUiEvent)
+                        MovieList(
+                            movies = uiState.listMovies,
+                            onUiEvent = onUiEvent,
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        )
                     }
 
                     if (uiState.listTvs.isNotEmpty()) {
@@ -88,7 +107,12 @@ fun ContentScreen(
                             title = stringResource(R.string.title_tv),
                             modifier = Modifier.padding(start = 10.dp),
                         )
-                        TvList(uiState.listTvs, onUiEvent)
+                        TvList(
+                            tv = uiState.listTvs,
+                            onUiEvent = onUiEvent,
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        )
                     }
                 }
             }
@@ -135,40 +159,64 @@ fun EmptyFavoritesScreen() {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MovieList(
     movies: List<Movie>,
     onUiEvent: (UiEvent) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-    LazyRow(
-        modifier =
-            Modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        content = {
-            items(movies) { movie ->
-                ItemCard(posterPath = movie.posterPath) {
-                    onUiEvent(UiEvent.Navigate(Router.DetailMovie(movie.id)))
+    with(sharedTransitionScope) {
+        LazyRow(
+            modifier =
+                Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            content = {
+                items(movies) { movie ->
+                    ItemCard(
+                        posterPath = movie.posterPath,
+                        modifier =
+                            Modifier.sharedElement(
+                                state = rememberSharedContentState(key = "movie_${movie.id}"),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                            ),
+                    ) {
+                        onUiEvent(UiEvent.Navigate(Router.DetailMovie(movie.id)))
+                    }
                 }
-            }
-        },
-    )
+            },
+        )
+    }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun TvList(
     tv: List<Tv>,
     onUiEvent: (UiEvent) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-    LazyRow(
-        modifier =
-            Modifier.fillMaxSize(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        content = {
-            items(tv) { tv ->
-                ItemCard(posterPath = tv.posterPath) {
-                    onUiEvent(UiEvent.Navigate(Router.DetailTv(tv.id)))
+    with(sharedTransitionScope) {
+        LazyRow(
+            modifier =
+                Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            content = {
+                items(tv) { tv ->
+                    ItemCard(
+                        posterPath = tv.posterPath,
+                        modifier =
+                            Modifier.sharedElement(
+                                state = rememberSharedContentState(key = "tv_${tv.id}"),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                            ),
+                    ) {
+                        onUiEvent(UiEvent.Navigate(Router.DetailTv(tv.id)))
+                    }
                 }
-            }
-        },
-    )
+            },
+        )
+    }
 }

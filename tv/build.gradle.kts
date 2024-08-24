@@ -49,6 +49,9 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":common"))
 
+    implementation(libs.navigation.compose)
+
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)

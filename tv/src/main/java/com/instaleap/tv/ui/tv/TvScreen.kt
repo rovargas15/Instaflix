@@ -1,5 +1,8 @@
 package com.instaleap.tv.ui.tv
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,9 +29,12 @@ import com.instaleap.tv.R
 import com.instaleap.tv.ui.tv.TvContract.EffectTv
 import com.instaleap.tv.ui.tv.TvContract.UiEventTv
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun TvScreen(
     viewModel: TvViewModel = hiltViewModel(),
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     navigate: (Router) -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -61,10 +67,10 @@ fun ContentScreen(
 
             Column(
                 modifier =
-                Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                    Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 if (uiState.listPopular.isNotEmpty()) {

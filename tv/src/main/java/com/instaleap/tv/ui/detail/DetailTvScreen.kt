@@ -1,5 +1,8 @@
 package com.instaleap.tv.ui.detail
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,10 +54,13 @@ import com.instaleap.tv.ui.detail.DetailContract.EffectDetail
 import com.instaleap.tv.ui.detail.DetailContract.UiEventDetail
 import com.instaleap.tv.ui.detail.DetailContract.UiStateDetail
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun DetailTvScreen(
     viewModel: DetailViewModel = hiltViewModel(),
     tvId: Int,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     navigateToBack: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
