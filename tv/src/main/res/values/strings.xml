@@ -3,4 +3,10 @@
     <string name="title_popular">Popular</string>
     <string name="title_top_rated">Top rated</string>
     <string name="title_on_the_air">On the Air</string>
+    <string name="label_first_air_date">Primer capitulo</string>
+    <string name="label_status">Estado</string>
+    <string name="label_original_languaje">Lenguaje original</string>
+    <string name="no_overview">Actualmente no se encuentra una descripción.</string>
+    <string name="title_description">Descripción</string>
+    <string name="title_image">Imagenes</string>
 </resources>

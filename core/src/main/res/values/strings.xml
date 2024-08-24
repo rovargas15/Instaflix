@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_title_movies">Movies</string>
+    <string name="menu_title_tv_shows">TV Shows</string>
+    <string name="menu_title_my_list">My List</string>
+    <string name="category_popular">popular</string>
+    <string name="category_top_rated">top_rated</string>
+    <string name="category_upcoming">upcoming</string>
+    <string name="category_on_the_air">on_the_air</string>
+</resources>

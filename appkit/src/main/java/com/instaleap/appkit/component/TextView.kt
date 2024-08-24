@@ -23,7 +23,7 @@ fun TextCategory(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        modifier = modifier,
+        modifier = modifier.padding(top = 12.dp, bottom = 12.dp),
         text = title,
         style = TextStyle().copy(fontSize = 18.sp, fontWeight = FontWeight.SemiBold),
     )

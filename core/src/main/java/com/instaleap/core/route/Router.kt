@@ -1,5 +1,6 @@
 package com.instaleap.core.route
 
+import com.instaleap.core.R
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -25,27 +26,22 @@ sealed class Router {
 }
 
 data class MenuItem(
-    val title: String,
+    val title: Int,
     val route: Router,
 ) {
     companion object {
         val items =
             listOf(
-                MenuItem("Movies", Router.Movie),
-                MenuItem("TV Shows", Router.Tv),
-                MenuItem("My List", Router.Favorite),
+                MenuItem(R.string.menu_title_movies, Router.Movie),
+                MenuItem(R.string.menu_title_tv_shows, Router.Tv),
+                MenuItem(R.string.menu_title_my_list, Router.Favorite),
             )
     }
 }
 
-object CategoryMovie {
+object Category {
     const val POPULAR = "popular"
     const val TOP_RATED = "top_rated"
     const val UPCOMING = "upcoming"
-}
-
-object CategoryTv {
-    const val POPULAR = "popular"
-    const val TOP_RATED = "top_rated"
     const val ON_THE_AIR = "on_the_air"
 }

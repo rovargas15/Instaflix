@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,6 +46,7 @@ import com.instaleap.appkit.component.TextCategory
 import com.instaleap.core.CollectEffects
 import com.instaleap.domain.model.Image
 import com.instaleap.domain.model.Tv
+import com.instaleap.tv.R
 import com.instaleap.tv.ui.detail.DetailContract.EffectDetail
 import com.instaleap.tv.ui.detail.DetailContract.UiEventDetail
 import com.instaleap.tv.ui.detail.DetailContract.UiStateDetail
@@ -134,24 +136,28 @@ private fun ContentTvDetail(
 
         ElevatedCard(
             modifier =
-                Modifier.padding(start = 16.dp).constrainAs(poster) {
-                    top.linkTo(header.bottom)
-                    bottom.linkTo(header.bottom)
-                    start.linkTo(parent.start)
-                },
+                Modifier
+                    .padding(start = 16.dp)
+                    .constrainAs(poster) {
+                        top.linkTo(header.bottom)
+                        bottom.linkTo(header.bottom)
+                        start.linkTo(parent.start)
+                    },
         ) {
             LoaderImagePoster(tv.posterPath)
         }
 
         Column(
             modifier =
-                Modifier.padding(all = 16.dp).constrainAs(infoTv) {
-                    top.linkTo(header.bottom)
-                    bottom.linkTo(poster.bottom)
-                    start.linkTo(poster.end)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                },
+                Modifier
+                    .padding(all = 16.dp)
+                    .constrainAs(infoTv) {
+                        top.linkTo(header.bottom)
+                        bottom.linkTo(poster.bottom)
+                        start.linkTo(poster.end)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    },
         ) {
             Text(
                 text = tv.name,
@@ -186,26 +192,28 @@ private fun ContentTvDetail(
 
         Row(
             modifier =
-                Modifier.padding(all = 16.dp).constrainAs(infoDetail) {
-                    top.linkTo(poster.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                },
+                Modifier
+                    .padding(all = 16.dp)
+                    .constrainAs(infoDetail) {
+                        top.linkTo(poster.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    },
         ) {
             uiState.tvDetail?.let {
                 Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow("Primer capitulo")
+                    ItemLabelRow(stringResource(R.string.label_first_air_date))
                     ItemRow(it.firstAirDate)
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow("Status")
+                    ItemLabelRow(stringResource(R.string.label_status))
                     ItemRow(it.status)
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow("Lenguaje original")
+                    ItemLabelRow(stringResource(R.string.label_original_languaje))
                     ItemRow(it.originalLanguage)
                 }
             }
@@ -213,12 +221,14 @@ private fun ContentTvDetail(
 
         Column(
             modifier =
-                Modifier.padding(horizontal = 16.dp).constrainAs(overview) {
-                    top.linkTo(infoDetail.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                },
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .constrainAs(overview) {
+                        top.linkTo(infoDetail.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    },
         ) {
             ContentOverview(uiState.tv)
             ContentImage(uiState.image)
@@ -228,9 +238,12 @@ private fun ContentTvDetail(
 
 @Composable
 fun ContentOverview(tv: Tv) {
-    TextCategory("Descripción", modifier = Modifier.padding(bottom = 8.dp))
+    TextCategory(
+        stringResource(R.string.title_description),
+        modifier = Modifier.padding(bottom = 8.dp),
+    )
     Text(
-        text = tv.overview,
+        text = tv.overview.ifEmpty { stringResource(R.string.no_overview) },
         style = MaterialTheme.typography.bodySmall,
     )
 }
@@ -239,7 +252,7 @@ fun ContentOverview(tv: Tv) {
 fun ContentImage(images: Image?) {
     images?.let {
         Text(
-            "Imagenes",
+            stringResource(R.string.title_image),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 12.dp),
         )

@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":appkit"))
     implementation(project(":domain"))
+    implementation(project(":common"))
 
     implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)

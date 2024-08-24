@@ -3,12 +3,13 @@ package com.instaleap.movie.ui.movie
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.instaleap.core.MviViewModel
+import com.instaleap.core.route.Category
 import com.instaleap.domain.usecase.GetMovieByCategory
 import com.instaleap.movie.ui.movie.MovieContract.EffectMovie
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel
@@ -17,7 +18,7 @@ class MovieViewModel
         private val getMovieByCategory: GetMovieByCategory,
         private val coroutineDispatcher: CoroutineDispatcher,
     ) : MviViewModel<MovieContract.UiStateMovie, MovieContract.UiEventMovie, EffectMovie>() {
-        val categories = listOf("popular", "top_rated", "upcoming")
+        private val categories = listOf(Category.POPULAR, Category.TOP_RATED, Category.UPCOMING)
 
         override fun initialState() = MovieContract.UiStateMovie()
 
@@ -30,7 +31,7 @@ class MovieViewModel
                     getMovieByCategory.invoke(category).fold(
                         onSuccess = {
                             when (category) {
-                                "popular" -> {
+                                Category.POPULAR -> {
                                     updateState {
                                         copy(
                                             listPopular = it.results,
@@ -38,7 +39,7 @@ class MovieViewModel
                                     }
                                 }
 
-                                "top_rated" -> {
+                                Category.TOP_RATED -> {
                                     updateState {
                                         copy(
                                             listTopRated = it.results,
@@ -46,7 +47,7 @@ class MovieViewModel
                                     }
                                 }
 
-                                "upcoming" -> {
+                                Category.UPCOMING -> {
                                     updateState {
                                         copy(
                                             listUpcoming = it.results,

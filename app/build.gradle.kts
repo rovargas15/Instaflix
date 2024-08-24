@@ -51,11 +51,12 @@ android {
 }
 
 dependencies {
+    implementation(project(":core"))
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":appkit"))
     implementation(project(":presentation"))
-    implementation(project(":core"))
+    implementation(project(":common"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

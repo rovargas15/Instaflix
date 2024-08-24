@@ -15,7 +15,7 @@ lifecycleRuntimeKtx = "2.8.4"
 activityCompose = "1.9.1"
 composePlugin = "1.6.10"
 composeBom = "2024.08.00"
-navigationCompose = "2.8.0"
+navigationCompose = "2.8.0-rc01"
 constraintlayoutCompose = "1.0.1"
 ktor-bom = "2.3.12"
 androidx-room = "2.6.1"
@@ -26,6 +26,8 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 mockk = "1.13.12"
 coroutines = "1.8.1"
+runtimeAndroid = "1.6.8"
+lifecycleViewmodelAndroid = "2.8.4"
 appcompat = "1.7.0"
 material = "1.12.0"
 
@@ -46,7 +48,9 @@ coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose"
 constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.0-rc01" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-android", version.ref = "lifecycleViewmodelAndroid" }
 
 # ktor
 ktor-bom = { group = "io.ktor", name = "ktor-bom", version.ref = "ktor-bom" }
@@ -76,6 +80,7 @@ androidx-room-paging = { group = "androidx.room", name = "room-paging", version.
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidx-room" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

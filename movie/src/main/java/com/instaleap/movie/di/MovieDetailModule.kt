@@ -1,6 +1,7 @@
 package com.instaleap.movie.di
 
 import com.instaleap.domain.repository.MovieRepository
+import com.instaleap.domain.usecase.GetImageById
 import com.instaleap.domain.usecase.GetMovieById
 import com.instaleap.domain.usecase.GetMovieDetailById
 import com.instaleap.domain.usecase.UpdateMovie
@@ -33,11 +34,13 @@ object MovieDetailModule {
         getDetailUseCase: GetMovieDetailById,
         getMovieById: GetMovieById,
         updateMovie: UpdateMovie,
+        getImageById: GetImageById,
         coroutineDispatcher: CoroutineDispatcher,
     ) = DetailViewModel(
         getDetailUseCase = getDetailUseCase,
         getMovieById = getMovieById,
         updateMovie = updateMovie,
+        getImageById = getImageById,
         coroutineDispatcher = coroutineDispatcher,
     )
 }

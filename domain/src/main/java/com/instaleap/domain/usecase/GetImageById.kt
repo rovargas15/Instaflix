@@ -6,5 +6,12 @@ import com.instaleap.domain.repository.ImageRepository
 class GetImageById(
     private val repository: ImageRepository,
 ) {
-    suspend fun invoke(id: Int): Result<Image> = repository.getMovieImageById(id)
+    suspend fun invoke(
+        id: Int,
+        path: String,
+    ): Result<Image> =
+        repository.getImageById(
+            id = id,
+            path = path,
+        )
 }

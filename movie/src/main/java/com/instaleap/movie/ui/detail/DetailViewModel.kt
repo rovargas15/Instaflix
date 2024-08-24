@@ -2,6 +2,7 @@ package com.instaleap.movie.ui.detail
 
 import androidx.lifecycle.viewModelScope
 import com.instaleap.core.MviViewModel
+import com.instaleap.domain.usecase.GetImageById
 import com.instaleap.domain.usecase.GetMovieById
 import com.instaleap.domain.usecase.GetMovieDetailById
 import com.instaleap.domain.usecase.UpdateMovie
@@ -18,11 +19,23 @@ class DetailViewModel
         private val getDetailUseCase: GetMovieDetailById,
         private val getMovieById: GetMovieById,
         private val updateMovie: UpdateMovie,
+        private val getImageById: GetImageById,
         private val coroutineDispatcher: CoroutineDispatcher,
     ) : MviViewModel<DetailContract.UiStateDetail, DetailContract.UiEventDetail, EffectDetail>() {
         override fun initialState() = DetailContract.UiStateDetail()
 
         fun fetchData(movieId: Int) {
+            viewModelScope.launch(coroutineDispatcher) {
+                getImageById.invoke(movieId, PATH_IMAGE).fold(
+                    onSuccess = {
+                        updateState {
+                            copy(image = it)
+                        }
+                    },
+                    onFailure = {
+                    },
+                )
+            }
             viewModelScope.launch(coroutineDispatcher) {
                 getDetailUseCase.invoke(movieId).fold(
                     onSuccess = {
@@ -63,3 +76,4 @@ class DetailViewModel
             }
         }
     }
+private const val PATH_IMAGE = "movie"

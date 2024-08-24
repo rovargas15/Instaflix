@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 abstract class MviViewModel<UiState, UiEvent, Effect> : ViewModel() {
-
     private val mutableUiState by lazy { MutableStateFlow(initialState()) }
     val uiState: StateFlow<UiState> by lazy { mutableUiState.asStateFlow() }
 
@@ -34,5 +33,4 @@ abstract class MviViewModel<UiState, UiEvent, Effect> : ViewModel() {
     abstract fun initialState(): UiState
 
     abstract fun onUiEvent(uiEvent: UiEvent)
-
 }

@@ -2,6 +2,7 @@ package com.instaleap.appkit.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -12,9 +13,11 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.instaleap.appkit.R
 import com.instaleap.appkit.theme.RedLevel03
@@ -31,26 +34,26 @@ fun TopBarMovie(
     Scaffold(
         topBar = {
             TopAppBar(title = {
-                Row(
-                    modifier =
-                        Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.logo),
-                        contentDescription = "Logo",
-                        modifier = Modifier.fillMaxHeight(),
-                        contentScale = ContentScale.Fit,
-                    )
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Row(
+                        modifier =
+                            Modifier.padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.logo),
+                            contentDescription = "Logo",
+                            modifier = Modifier.fillMaxHeight(),
+                            contentScale = ContentScale.Fit,
+                        )
 
-                    MenuItem.items.forEach {
-                        AppKitLinkButton(
-                            text = it.title,
-                            color = if (it.route == selected) RedLevel03 else colorScheme.onPrimaryContainer,
-                        ) {
-                            router(it.route)
+                        MenuItem.items.forEach {
+                            AppKitLinkButton(
+                                text = stringResource(id = it.title),
+                                color = if (it.route == selected) RedLevel03 else colorScheme.onPrimaryContainer,
+                            ) {
+                                router(it.route)
+                            }
                         }
                     }
                 }

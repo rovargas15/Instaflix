@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,8 +44,9 @@ import com.instaleap.appkit.component.LoaderImagePoster
 import com.instaleap.appkit.component.NavImageIcon
 import com.instaleap.appkit.component.TextCategory
 import com.instaleap.core.CollectEffects
-import com.instaleap.domain.model.Movie
 import com.instaleap.domain.model.Image
+import com.instaleap.domain.model.Movie
+import com.instaleap.movie.R
 import com.instaleap.movie.ui.detail.DetailContract.EffectDetail
 import com.instaleap.movie.ui.detail.DetailContract.UiEventDetail
 import com.instaleap.movie.ui.detail.DetailContract.UiStateDetail
@@ -134,24 +136,28 @@ private fun ContentMovieDetail(
 
         ElevatedCard(
             modifier =
-                Modifier.padding(start = 16.dp).constrainAs(poster) {
-                    top.linkTo(header.bottom)
-                    bottom.linkTo(header.bottom)
-                    start.linkTo(parent.start)
-                },
+                Modifier
+                    .padding(start = 16.dp)
+                    .constrainAs(poster) {
+                        top.linkTo(header.bottom)
+                        bottom.linkTo(header.bottom)
+                        start.linkTo(parent.start)
+                    },
         ) {
             LoaderImagePoster(movie.posterPath)
         }
 
         Column(
             modifier =
-                Modifier.padding(all = 16.dp).constrainAs(infoMovie) {
-                    top.linkTo(header.bottom)
-                    bottom.linkTo(poster.bottom)
-                    start.linkTo(poster.end)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                },
+                Modifier
+                    .padding(all = 16.dp)
+                    .constrainAs(infoMovie) {
+                        top.linkTo(header.bottom)
+                        bottom.linkTo(poster.bottom)
+                        start.linkTo(poster.end)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    },
         ) {
             Text(
                 text = movie.title,
@@ -187,25 +193,27 @@ private fun ContentMovieDetail(
         uiState.movieDetail?.let {
             Row(
                 modifier =
-                    Modifier.padding(all = 16.dp).constrainAs(infoDetail) {
-                        top.linkTo(poster.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                    },
+                    Modifier
+                        .padding(all = 16.dp)
+                        .constrainAs(infoDetail) {
+                            top.linkTo(poster.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                        },
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow("Duración")
+                    ItemLabelRow(stringResource(R.string.label_runtime))
                     ItemRow(it.runtime.toString())
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow("Estreno")
+                    ItemLabelRow(stringResource(R.string.label_release_date))
                     ItemRow(it.releaseDate)
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    ItemLabelRow("Lenguaje original")
+                    ItemLabelRow(stringResource(R.string.label_original_language))
                     ItemRow(it.originalLanguage)
                 }
             }
@@ -213,12 +221,14 @@ private fun ContentMovieDetail(
 
         Column(
             modifier =
-                Modifier.padding(horizontal = 16.dp).constrainAs(overview) {
-                    top.linkTo(infoDetail.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                },
+                Modifier
+                    .padding(horizontal = 16.dp)
+                    .constrainAs(overview) {
+                        top.linkTo(infoDetail.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.fillToConstraints
+                    },
         ) {
             ContentOverview(uiState.movie)
             ContentImage(uiState.image)
@@ -228,7 +238,10 @@ private fun ContentMovieDetail(
 
 @Composable
 fun ContentOverview(movie: Movie) {
-    TextCategory("Descripción", modifier = Modifier.padding(bottom = 8.dp))
+    TextCategory(
+        stringResource(R.string.label_overview),
+        modifier = Modifier.padding(bottom = 8.dp),
+    )
     Text(
         text = movie.overview,
         style = MaterialTheme.typography.bodySmall,
@@ -239,7 +252,7 @@ fun ContentOverview(movie: Movie) {
 fun ContentImage(images: Image?) {
     images?.let {
         Text(
-            "Imagenes",
+            stringResource(R.string.label_image),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(horizontal = 12.dp),
         )
