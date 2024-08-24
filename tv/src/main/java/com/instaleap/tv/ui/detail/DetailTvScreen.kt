@@ -48,6 +48,7 @@ import com.instaleap.appkit.component.LoaderImagePoster
 import com.instaleap.appkit.component.NavImageIcon
 import com.instaleap.appkit.component.TextCategory
 import com.instaleap.core.CollectEffects
+import com.instaleap.core.route.Router
 import com.instaleap.domain.model.Tv
 import com.instaleap.tv.R
 import com.instaleap.tv.ui.detail.DetailContract.EffectDetail
@@ -58,13 +59,13 @@ import com.instaleap.tv.ui.detail.DetailContract.UiStateDetail
 @Composable
 fun DetailTvScreen(
     viewModel: DetailViewModel = hiltViewModel(),
-    tvId: Int,
+    tv: Router.DetailTv,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     navigateToBack: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
-        viewModel.fetchData(tvId)
+        viewModel.fetchData(tv)
     }
 
     CollectEffects(viewModel.effects) { effect ->
@@ -78,6 +79,7 @@ fun DetailTvScreen(
     val uiState by viewModel.uiState.collectAsState()
     ContentTvDetail(
         uiState = uiState,
+        category = tv.category,
         onUiEvent = viewModel::onUiEvent,
         sharedTransitionScope = sharedTransitionScope,
         animatedVisibilityScope = animatedVisibilityScope,
@@ -89,6 +91,7 @@ fun DetailTvScreen(
 private fun ContentTvDetail(
     uiState: UiStateDetail,
     onUiEvent: (UiEventDetail) -> Unit = {},
+    category: String,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
@@ -160,8 +163,8 @@ private fun ContentTvDetail(
                             bottom.linkTo(header.bottom)
                             start.linkTo(parent.start)
                         }.sharedElement(
-                            rememberSharedContentState(key = "tv_${tv.id}"),
-                            animatedVisibilityScope,
+                            state = rememberSharedContentState(key = "tv_$category${tv.id}"),
+                            animatedVisibilityScope = animatedVisibilityScope,
                         ),
             ) {
                 LoaderImagePoster(tv.posterPath)

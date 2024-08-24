@@ -84,7 +84,7 @@ fun NavGraphBuilder.tv(
 
     composable<Router.DetailTv> {
         DetailTvScreen(
-            tvId = it.toRoute<Router.DetailTv>().id,
+            tv = it.toRoute<Router.DetailTv>(),
             sharedTransitionScope = sharedTransitionScope,
             animatedVisibilityScope = this@composable,
             navigateToBack = {

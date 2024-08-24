@@ -9,7 +9,7 @@ import com.instaleap.domain.model.Tv
 data class TvEntity(
     @PrimaryKey val id: Int,
     val adult: Boolean,
-    val backdropPath: String,
+    val backdropPath: String?,
     val firstAirDate: String,
     @field:TypeConverters(GenreConvert::class) val genreIds: List<Int>,
     val name: String,
@@ -28,7 +28,7 @@ data class TvEntity(
         Tv(
             id = id,
             adult = adult,
-            backdropPath = backdropPath,
+            backdropPath = backdropPath ?: "",
             genreIds = genreIds.toList(),
             originalLanguage = originalLanguage,
             overview = overview,

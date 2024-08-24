@@ -19,6 +19,7 @@ sealed class Router {
     @Serializable
     data class DetailTv(
         val id: Int,
+        val category: String,
     ) : Router()
 
     @Serializable
@@ -43,5 +44,5 @@ object Category {
     const val POPULAR = "popular"
     const val TOP_RATED = "top_rated"
     const val UPCOMING = "upcoming"
-    const val ON_THE_AIR = "on_the_air"
+    const val ON_THE_AIR = "airing_today"
 }

@@ -2,6 +2,7 @@ package com.instaleap.tv.ui.detail
 
 import androidx.lifecycle.viewModelScope
 import com.instaleap.core.MviViewModel
+import com.instaleap.core.route.Router
 import com.instaleap.domain.usecase.GetImageById
 import com.instaleap.domain.usecase.GetTvById
 import com.instaleap.domain.usecase.GetTvDetailById
@@ -25,9 +26,9 @@ class DetailViewModel
     ) : MviViewModel<DetailContract.UiStateDetail, UiEventDetail, EffectDetail>() {
         override fun initialState() = DetailContract.UiStateDetail()
 
-        fun fetchData(movieId: Int) {
+        fun fetchData(tv: Router.DetailTv) {
             viewModelScope.launch(coroutineDispatcher) {
-                getImageById.invoke(movieId, PATH_IMAGE).fold(
+                getImageById.invoke(tv.id, PATH_IMAGE).fold(
                     onSuccess = {
                         updateState {
                             copy(image = it)
@@ -38,7 +39,7 @@ class DetailViewModel
                 )
             }
             viewModelScope.launch(coroutineDispatcher) {
-                getDetailUseCase.invoke(movieId).fold(
+                getDetailUseCase.invoke(tv.id).fold(
                     onSuccess = {
                         updateState {
                             copy(tvDetail = it)
@@ -49,7 +50,7 @@ class DetailViewModel
                 )
             }
             viewModelScope.launch(coroutineDispatcher) {
-                getMovieById.invoke(movieId).collect {
+                getMovieById.invoke(tv.id).collect {
                     updateState {
                         copy(tv = it)
                     }

@@ -213,7 +213,7 @@ fun TvList(
                                 animatedVisibilityScope = animatedVisibilityScope,
                             ),
                     ) {
-                        onUiEvent(UiEvent.Navigate(Router.DetailTv(tv.id)))
+                        onUiEvent(UiEvent.Navigate(Router.DetailTv(tv.id, "")))
                     }
                 }
             },

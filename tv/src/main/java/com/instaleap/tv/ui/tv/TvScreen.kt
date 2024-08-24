@@ -23,6 +23,7 @@ import com.instaleap.appkit.component.ItemCard
 import com.instaleap.appkit.component.TextCategory
 import com.instaleap.appkit.component.TopBarMovie
 import com.instaleap.core.CollectEffects
+import com.instaleap.core.route.Category
 import com.instaleap.core.route.Router
 import com.instaleap.domain.model.Tv
 import com.instaleap.tv.R
@@ -88,6 +89,7 @@ fun ContentScreen(
                     )
                     TvList(
                         tv = uiState.listPopular,
+                        category = Category.POPULAR,
                         onUiEvent = onUiEvent,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
@@ -101,6 +103,7 @@ fun ContentScreen(
                     )
                     TvList(
                         tv = uiState.listTopRated,
+                        category = Category.TOP_RATED,
                         onUiEvent = onUiEvent,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
@@ -114,6 +117,7 @@ fun ContentScreen(
                     )
                     TvList(
                         tv = uiState.listOnTheAir,
+                        category = Category.ON_THE_AIR,
                         onUiEvent = onUiEvent,
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
@@ -131,6 +135,7 @@ fun ContentScreen(
 @Composable
 fun TvList(
     tv: List<Tv>,
+    category: String,
     onUiEvent: (UiEventTv) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
@@ -145,11 +150,11 @@ fun TvList(
                         posterPath = tv.posterPath,
                         modifier =
                             Modifier.sharedElement(
-                                state = rememberSharedContentState(key = "tv_${tv.id}"),
+                                state = rememberSharedContentState(key = "tv_$category${tv.id}"),
                                 animatedVisibilityScope = animatedVisibilityScope,
                             ),
                     ) {
-                        onUiEvent(UiEventTv.Navigate(Router.DetailTv(tv.id)))
+                        onUiEvent(UiEventTv.Navigate(Router.DetailTv(tv.id, category)))
                     }
                 }
             },
