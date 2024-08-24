@@ -2,4 +2,8 @@
 <resources>
     <string name="title_movie">Movie</string>
     <string name="title_tv">Tv Show</string>
+    <string name="message_instructions_favorite">1. Navega por nuestra colección de series y películas.\n2. Toca el ícono de corazón.</string>
+    <string name="label_How_to_message">¿Cómo agregar favoritos?</string>
+    <string name="label_instructional_text">Tu lista de favoritos está vacía. Agrega tus series y películas preferidas para que puedas encontrarlas fácilmente aquí. ¡Explora nuestra biblioteca y empieza a guardar tus opciones favoritas ahora!</string>
+    <string name="title_msg_empty">¡Aún no tienes favoritos!</string>
 </resources>

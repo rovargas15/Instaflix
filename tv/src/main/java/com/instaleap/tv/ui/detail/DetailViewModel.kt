@@ -68,11 +68,30 @@ class DetailViewModel
         override fun onUiEvent(uiEvent: UiEventDetail) {
             when (uiEvent) {
                 is UiEventDetail.ToggleFavorite -> {
-                    update()
+                    if (uiEvent.tv.isFavorite) {
+                        updateState {
+                            copy(isShowDialog = true)
+                        }
+                    } else {
+                        update()
+                    }
                 }
 
                 is UiEventDetail.NavigateToBack -> {
                     sendEffect(EffectDetail.NavigateToBack)
+                }
+
+                UiEventDetail.DismissDialog -> {
+                    updateState {
+                        copy(isShowDialog = false)
+                    }
+                }
+
+                UiEventDetail.RemoveFavorite -> {
+                    update()
+                    updateState {
+                        copy(isShowDialog = false)
+                    }
                 }
             }
         }

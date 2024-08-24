@@ -9,7 +9,9 @@ interface FavoriteContract {
         val isLoading: Boolean = false,
         val listMovies: List<Movie> = emptyList(),
         val listTvs: List<Tv> = emptyList(),
-    )
+    ) {
+        fun isListEmpty(): Boolean = listMovies.isEmpty() && listTvs.isEmpty()
+    }
 
     sealed class UiEvent {
         data class Navigate(

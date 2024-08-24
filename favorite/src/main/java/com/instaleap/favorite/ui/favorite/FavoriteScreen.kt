@@ -1,6 +1,7 @@
 package com.instaleap.favorite.ui.favorite
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -8,12 +9,16 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.instaleap.appkit.component.ItemCard
@@ -54,32 +59,37 @@ fun ContentScreen(
     TopBarMovie(
         selected = Router.Favorite,
         content = { innerPadding ->
-            if (uiState.isLoading) {
-                // TODO: implement loader here
-            }
-
-            Column(
-                modifier =
-                    Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                if (uiState.listMovies.isNotEmpty()) {
-                    TextCategory(
-                        title = stringResource(R.string.title_movie),
-                        modifier = Modifier.padding(start = 10.dp),
-                    )
-                    MovieList(uiState.listMovies, onUiEvent)
+            if (uiState.isListEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    EmptyFavoritesScreen()
                 }
+            } else {
+                Column(
+                    modifier =
+                        Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
+                    if (uiState.listMovies.isNotEmpty()) {
+                        TextCategory(
+                            title = stringResource(R.string.title_movie),
+                            modifier = Modifier.padding(start = 10.dp),
+                        )
+                        MovieList(uiState.listMovies, onUiEvent)
+                    }
 
-                if (uiState.listTvs.isNotEmpty()) {
-                    TextCategory(
-                        title = stringResource(R.string.title_tv),
-                        modifier = Modifier.padding(start = 10.dp),
-                    )
-                    TvList(uiState.listTvs, onUiEvent)
+                    if (uiState.listTvs.isNotEmpty()) {
+                        TextCategory(
+                            title = stringResource(R.string.title_tv),
+                            modifier = Modifier.padding(start = 10.dp),
+                        )
+                        TvList(uiState.listTvs, onUiEvent)
+                    }
                 }
             }
         },
@@ -87,6 +97,42 @@ fun ContentScreen(
             onUiEvent(UiEvent.Navigate(it))
         },
     )
+}
+
+@Composable
+fun EmptyFavoritesScreen() {
+    Column(
+        modifier =
+            Modifier
+                .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = stringResource(R.string.title_msg_empty),
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.padding(bottom = 16.dp),
+        )
+
+        Text(
+            text = stringResource(R.string.label_instructional_text),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 24.dp),
+        )
+
+        Text(
+            text = stringResource(R.string.label_How_to_message),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+
+        Text(
+            text = stringResource(R.string.message_instructions_favorite),
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+        )
+    }
 }
 
 @Composable

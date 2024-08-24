@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.instaleap.appkit.component.ConfirmRemoveFavoriteDialog
 import com.instaleap.appkit.component.ContentImage
 import com.instaleap.appkit.component.ItemGenre
 import com.instaleap.appkit.component.ItemLabelRow
@@ -56,6 +57,18 @@ fun DetailMovieScreen(
     movieId: Int,
     navigateToBack: () -> Unit,
 ) {
+    HandleState(viewModel, movieId, navigateToBack)
+
+    val uiState by viewModel.uiState.collectAsState()
+    ContentMovieDetail(uiState, viewModel::onUiEvent)
+}
+
+@Composable
+private fun HandleState(
+    viewModel: DetailViewModel,
+    movieId: Int,
+    navigateToBack: () -> Unit,
+) {
     LaunchedEffect(Unit) {
         viewModel.fetchData(movieId)
     }
@@ -67,9 +80,6 @@ fun DetailMovieScreen(
             }
         }
     }
-
-    val uiState by viewModel.uiState.collectAsState()
-    ContentMovieDetail(uiState, viewModel::onUiEvent)
 }
 
 @Composable
@@ -78,13 +88,15 @@ private fun ContentMovieDetail(
     onUiEvent: (UiEventDetail) -> Unit = {},
 ) {
     val movie = uiState.movie ?: return
+    if (uiState.isShowDialog) {
+        ShowDialog(onUiEvent)
+    }
 
-    val scrollState = rememberScrollState()
     ConstraintLayout(
         modifier =
             Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState),
+                .verticalScroll(rememberScrollState()),
     ) {
         val (header, btnBack, btnFavorite, poster, infoMovie, infoDetail, overview) = createRefs()
 
@@ -240,7 +252,22 @@ private fun ContentMovieDetail(
 }
 
 @Composable
-fun ContentOverview(movie: Movie) {
+private fun ShowDialog(onUiEvent: (UiEventDetail) -> Unit) {
+    ConfirmRemoveFavoriteDialog(
+        onDismissRequest = {
+            onUiEvent(UiEventDetail.DismissDialog)
+        },
+        onDismiss = {
+            onUiEvent(UiEventDetail.DismissDialog)
+        },
+        onConfirm = {
+            onUiEvent(UiEventDetail.RemoveFavorite)
+        },
+    )
+}
+
+@Composable
+private fun ContentOverview(movie: Movie) {
     TextCategory(
         stringResource(R.string.label_overview),
     )

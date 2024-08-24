@@ -2,4 +2,9 @@
 <resources>
     <string name="btn_more">All</string>
     <string name="label_image">Imagenes</string>
+
+    <string name="title_confirm">Confirmar</string>
+    <string name="remove_movie_from_favorites_confirmation">¿Seguro que deseas eliminar esta película y/o serie de tus favoritos?</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_cancel">Cancelar</string>
 </resources>

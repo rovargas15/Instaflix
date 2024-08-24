@@ -67,13 +67,33 @@ class DetailViewModel
         override fun onUiEvent(uiEvent: DetailContract.UiEventDetail) {
             when (uiEvent) {
                 is DetailContract.UiEventDetail.ToggleFavorite -> {
-                    updateMovie()
+                    if (uiEvent.movie.isFavorite) {
+                        updateState {
+                            copy(isShowDialog = true)
+                        }
+                    } else {
+                        updateMovie()
+                    }
                 }
 
                 is DetailContract.UiEventDetail.NavigateToBack -> {
                     sendEffect(EffectDetail.NavigateToBack)
                 }
+
+                is DetailContract.UiEventDetail.RemoveFavorite -> {
+                    updateMovie()
+                    updateState {
+                        copy(isShowDialog = false)
+                    }
+                }
+
+                else -> {
+                    updateState {
+                        copy(isShowDialog = false)
+                    }
+                }
             }
         }
     }
+
 private const val PATH_IMAGE = "movie"

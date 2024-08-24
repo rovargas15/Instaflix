@@ -11,6 +11,7 @@ interface DetailContract {
         val tv: Tv? = null,
         val tvDetail: TvDetail? = null,
         val image: Image? = null,
+        val isShowDialog: Boolean = false,
     )
 
     sealed class UiEventDetail {
@@ -19,6 +20,8 @@ interface DetailContract {
         ) : UiEventDetail()
 
         data object NavigateToBack : UiEventDetail()
+        data object RemoveFavorite : UiEventDetail()
+        data object DismissDialog : UiEventDetail()
     }
 
     sealed class EffectDetail {

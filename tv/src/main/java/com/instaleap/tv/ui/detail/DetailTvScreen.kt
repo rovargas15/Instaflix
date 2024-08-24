@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.instaleap.appkit.component.ConfirmRemoveFavoriteDialog
 import com.instaleap.appkit.component.ContentImage
 import com.instaleap.appkit.component.ItemGenre
 import com.instaleap.appkit.component.ItemLabelRow
@@ -78,13 +79,15 @@ private fun ContentTvDetail(
     onUiEvent: (UiEventDetail) -> Unit = {},
 ) {
     val tv = uiState.tv ?: return
+    if (uiState.isShowDialog) {
+        ShowDialog(onUiEvent)
+    }
 
-    val scrollState = rememberScrollState()
     ConstraintLayout(
         modifier =
             Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState),
+                .verticalScroll(rememberScrollState()),
     ) {
         val (header, btnBack, btnFavorite, poster, infoTv, infoDetail, overview) = createRefs()
 
@@ -237,6 +240,21 @@ private fun ContentTvDetail(
             }
         }
     }
+}
+
+@Composable
+private fun ShowDialog(onUiEvent: (UiEventDetail) -> Unit) {
+    ConfirmRemoveFavoriteDialog(
+        onDismissRequest = {
+            onUiEvent(UiEventDetail.DismissDialog)
+        },
+        onDismiss = {
+            onUiEvent(UiEventDetail.DismissDialog)
+        },
+        onConfirm = {
+            onUiEvent(UiEventDetail.RemoveFavorite)
+        },
+    )
 }
 
 @Composable

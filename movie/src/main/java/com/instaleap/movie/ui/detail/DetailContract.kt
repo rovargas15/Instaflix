@@ -1,8 +1,8 @@
 package com.instaleap.movie.ui.detail
 
+import com.instaleap.domain.model.Image
 import com.instaleap.domain.model.Movie
 import com.instaleap.domain.model.MovieDetail
-import com.instaleap.domain.model.Image
 
 interface DetailContract {
     data class UiStateDetail(
@@ -11,6 +11,7 @@ interface DetailContract {
         val movie: Movie? = null,
         val movieDetail: MovieDetail? = null,
         val image: Image? = null,
+        val isShowDialog: Boolean = false,
     )
 
     sealed class UiEventDetail {
@@ -19,6 +20,8 @@ interface DetailContract {
         ) : UiEventDetail()
 
         data object NavigateToBack : UiEventDetail()
+        data object RemoveFavorite : UiEventDetail()
+        data object DismissDialog : UiEventDetail()
     }
 
     sealed class EffectDetail {
