@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.hilt.android)
 }
 
+apply(from = "../jacoco.gradle")
+
 android {
     namespace = "com.instaleap.tv"
     compileSdk =

@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.hilt.android)
 }
 
+apply(from = "../jacoco.gradle")
+
 android {
     namespace = "com.instaleap.favorite"
     compileSdk = libs.versions.android.compileSdk.get().toInt()

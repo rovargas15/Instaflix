@@ -1,0 +1,93 @@
+apply plugin: 'jacoco'
+
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+android {
+    buildTypes {
+        debug {
+            testCoverageEnabled false
+        }
+    }
+    testOptions {
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+                excludes = ['jdk.internal.*']
+            }
+        }
+    }
+
+    // Definir filtros de archivo en una variable para facilitar el mantenimiento
+    def fileFilter = [
+            '**/*$ViewInjector*.*',
+            '**/*$ViewBinder*.*',
+            '**/*_ViewBinding*.*',
+            '**/*DefaultImpls*.*',
+            '**/R.class',
+            '**/R$*.class',
+            '**/BuildConfig.*',
+            '**/Manifest*.*',
+            'android/**/*.*',
+            '**/R2*.*',
+            '**/R2$*.*',
+            '**/*_MembersInjector.*',
+            '**/*Parcelable.*',
+            '**/*$Parcelable*.*',
+            '**/*_Factory*.*',
+            '**/*_Provide*Factory*.*',
+            '**/commons/**/*.*',
+            '**/di/**/*.*',
+            '**/domain/entity/**/*.*',
+            '**/data/model/**/*.*',
+    ]
+
+    def debugTree = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes", excludes: fileFilter)
+    def kotlinTree = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: fileFilter)
+    def mainSrc = "${project.projectDir}/src/main/java"
+    def execFile = "${buildDir}/jacoco/testDebugUnitTest.exec"
+    def reportDir = "${buildDir}/reports/jacoco/jacocoTestReport/html/index.html"
+
+    // Tarea para generar el reporte de JaCoCo
+    task jacocoTestReport(type: JacocoReport, dependsOn: 'testDebugUnitTest') {
+        group = 'jacocoReport'
+        description = 'Genera un reporte de cobertura de código con JaCoCo.'
+
+        sourceDirectories.setFrom(files([mainSrc]))
+        classDirectories.setFrom(files([debugTree, kotlinTree]))
+        executionData.setFrom(files(execFile))
+
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
+    }
+
+    // Tarea para verificar la cobertura de JaCoCo
+    task jacocoTestCoverageVerification(type: JacocoCoverageVerification, dependsOn: 'jacocoTestReport') {
+        group = 'jacocoReport'
+        description = 'Verifica la cobertura de código con JaCoCo.'
+
+        sourceDirectories.setFrom(files([mainSrc]))
+        classDirectories.setFrom(files([debugTree, kotlinTree]))
+        executionData.setFrom(files(execFile))
+
+        violationRules {
+            rule {
+                limit {
+                    minimum = 0.8
+                }
+            }
+        }
+    }
+
+    // Tarea para visualizar el resultado del reporte de JaCoCo
+    task jacocoTestCoverageViewResult(type: Exec, dependsOn: 'jacocoTestReport') {
+        group = 'jacocoReport'
+        description = 'Abre el reporte de cobertura de JaCoCo en el navegador.'
+
+        executable 'sh'
+        args '-c', "open '${reportDir}'"
+    }
+}

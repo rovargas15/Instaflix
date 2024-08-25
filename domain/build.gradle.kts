@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
 }
 
+apply(from = "../jacoco.gradle")
+
 android {
     namespace = "com.instaleap.domain"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
