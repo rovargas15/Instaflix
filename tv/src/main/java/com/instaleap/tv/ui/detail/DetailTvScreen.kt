@@ -4,14 +4,16 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -32,12 +34,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.instaleap.appkit.component.ConfirmRemoveFavoriteDialog
 import com.instaleap.appkit.component.ContentImage
@@ -52,7 +51,10 @@ import com.instaleap.appkit.theme.paddingMedium
 import com.instaleap.appkit.theme.paddingXLarge
 import com.instaleap.appkit.theme.paddingXMedium
 import com.instaleap.appkit.theme.paddingXSmall
+import com.instaleap.appkit.theme.size120
+import com.instaleap.appkit.theme.size150
 import com.instaleap.appkit.theme.size350
+import com.instaleap.appkit.util.toVote
 import com.instaleap.core.CollectEffects
 import com.instaleap.core.route.Router
 import com.instaleap.domain.model.Tv
@@ -70,6 +72,29 @@ fun DetailTvScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     navigateToBack: () -> Unit,
 ) {
+    HandleState(
+        viewModel = viewModel,
+        tv = tv,
+        navigateToBack = navigateToBack,
+    )
+
+    val uiState by viewModel.uiState.collectAsState()
+
+    ContentTvDetail(
+        uiState = uiState,
+        category = tv.category,
+        onUiEvent = viewModel::onUiEvent,
+        sharedTransitionScope = sharedTransitionScope,
+        animatedVisibilityScope = animatedVisibilityScope,
+    )
+}
+
+@Composable
+private fun HandleState(
+    viewModel: DetailViewModel,
+    tv: Router.DetailTv,
+    navigateToBack: () -> Unit,
+) {
     LaunchedEffect(Unit) {
         viewModel.fetchData(tv)
     }
@@ -81,15 +106,6 @@ fun DetailTvScreen(
             }
         }
     }
-
-    val uiState by viewModel.uiState.collectAsState()
-    ContentTvDetail(
-        uiState = uiState,
-        category = tv.category,
-        onUiEvent = viewModel::onUiEvent,
-        sharedTransitionScope = sharedTransitionScope,
-        animatedVisibilityScope = animatedVisibilityScope,
-    )
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -106,118 +122,107 @@ private fun ContentTvDetail(
         ShowDialog(onUiEvent)
     }
 
-    ConstraintLayout(
+    Column(
         modifier =
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(paddingMedium),
     ) {
-        val (header, btnBack, btnFavorite, poster, infoTv, infoDetail, overview) = createRefs()
+        ContentHeader(
+            tv = tv,
+            category = category,
+            onUiEvent = onUiEvent,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = animatedVisibilityScope,
+        )
 
+        ContentInfoDetail(
+            modifier = Modifier.fillMaxWidth(),
+            uiState = uiState,
+        )
+
+        ContentOverview(uiState.tv)
+        uiState.image?.backdrops?.let { posters ->
+            if (posters.isNotEmpty()) {
+                ContentImage(posters.map { it.filePath })
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun ContentHeader(
+    tv: Tv,
+    category: String,
+    onUiEvent: (UiEventDetail) -> Unit = {},
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+) {
+    Box {
         LoaderImage(
             url = tv.backdropPath,
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(size350)
-                    .constrainAs(header) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    },
+                    .height(size350),
         )
 
-        NavImageIcon(
-            modifier =
-                Modifier
-                    .constrainAs(btnBack) {
-                        top.linkTo(parent.top, paddingXLarge)
-                        start.linkTo(parent.start, paddingMedium)
-                    },
-            icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-        ) {
-            onUiEvent(UiEventDetail.NavigateToBack)
-        }
-
-        NavImageIcon(
-            modifier =
-                Modifier
-                    .constrainAs(btnFavorite) {
-                        top.linkTo(parent.top, paddingXLarge)
-                        end.linkTo(parent.end, paddingMedium)
-                    },
-            icon =
-                if (tv.isFavorite) {
-                    Icons.Filled.Favorite
-                } else {
-                    Icons.Filled.FavoriteBorder
-                },
-            tint = if (tv.isFavorite) Color.Red else Color.Black,
-        ) {
-            onUiEvent(UiEventDetail.ToggleFavorite(tv))
-        }
-
-        with(sharedTransitionScope) {
-            ElevatedCard(
-                modifier =
-                    Modifier
-                        .padding(start = dimensionResource(id = com.instaleap.appkit.R.dimen.padding_medium))
-                        .defaultMinSize(
-                            minWidth = dimensionResource(id = com.instaleap.appkit.R.dimen.with_poster),
-                            minHeight = dimensionResource(id = com.instaleap.appkit.R.dimen.height_poster),
-                        ).fillMaxWidth(0.4f)
-                        .constrainAs(poster) {
-                            top.linkTo(header.bottom)
-                            bottom.linkTo(header.bottom)
-                            start.linkTo(parent.start)
-                        }.sharedElement(
-                            state = rememberSharedContentState(key = "tv_$category${tv.id}"),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                        ),
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                LoaderImagePoster(tv.posterPath)
-            }
-        }
-
-        ContentInfoTv(
-            modifier =
-                Modifier.constrainAs(infoTv) {
-                    top.linkTo(header.bottom)
-                    bottom.linkTo(poster.bottom)
-                    start.linkTo(poster.end)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                },
-            uiState = uiState,
-        )
-
-        ContentInfoDetail(
-            modifier =
-                Modifier.constrainAs(infoDetail) {
-                    top.linkTo(poster.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                },
-            uiState = uiState,
-        )
-
-        Column(
-            modifier =
-                Modifier
-                    .padding(horizontal = paddingMedium)
-                    .constrainAs(overview) {
-                        top.linkTo(infoDetail.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                    },
-        ) {
-            ContentOverview(uiState.tv)
-            uiState.image?.backdrops?.let {
-                if (it.isNotEmpty()) {
-                    ContentImage(it.map { it.filePath })
+                NavImageIcon(
+                    modifier =
+                        Modifier
+                            .wrapContentSize()
+                            .padding(top = paddingXLarge, start = paddingMedium),
+                    icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                ) {
+                    onUiEvent(UiEventDetail.NavigateToBack)
                 }
+
+                NavImageIcon(
+                    modifier =
+                        Modifier
+                            .wrapContentSize()
+                            .padding(top = paddingXLarge, end = paddingMedium)
+                            .align(alignment = Alignment.CenterVertically),
+                    icon =
+                        if (tv.isFavorite) {
+                            Icons.Filled.Favorite
+                        } else {
+                            Icons.Filled.FavoriteBorder
+                        },
+                    tint = if (tv.isFavorite) Color.Red else Color.Black,
+                ) {
+                    onUiEvent(UiEventDetail.ToggleFavorite(tv))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(size150))
+
+            Row {
+                with(sharedTransitionScope) {
+                    ElevatedCard(
+                        modifier =
+                            Modifier
+                                .padding(start = paddingMedium)
+                                .sharedElement(
+                                    state = rememberSharedContentState(key = "tv_$category${tv.id}"),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                ),
+                    ) {
+                        LoaderImagePoster(tv.posterPath)
+                    }
+                }
+
+                ContentInfoTv(
+                    modifier = Modifier.padding(horizontal = paddingMedium).padding(top = size120),
+                    uiState = UiStateDetail(tv = tv),
+                )
             }
         }
     }
@@ -228,10 +233,10 @@ private fun ContentInfoDetail(
     modifier: Modifier,
     uiState: UiStateDetail,
 ) {
-    Row(
-        modifier = modifier.padding(all = paddingMedium),
-    ) {
-        uiState.tvDetail?.let {
+    uiState.tvDetail?.let {
+        Row(
+            modifier = modifier.padding(all = paddingMedium),
+        ) {
             Column(modifier = Modifier.weight(1f)) {
                 ItemLabelRow(stringResource(R.string.label_first_air_date))
                 ItemRow(it.firstAirDate)
@@ -258,7 +263,7 @@ private fun ContentInfoTv(
     Column(
         modifier =
             modifier
-                .padding(all = paddingMedium),
+                .padding(top = paddingMedium, end = paddingMedium),
     ) {
         Text(
             text = uiState.tv?.name ?: "",
@@ -274,7 +279,7 @@ private fun ContentInfoTv(
                 tint = Color(0xFFFEB800),
             )
             Text(
-                text = uiState.tvDetail?.voteAverage.toString(),
+                text = uiState.tvDetail?.voteAverage?.toVote() ?: "0",
                 modifier = Modifier.align(Alignment.CenterVertically),
                 style = MaterialTheme.typography.labelSmall,
             )
@@ -311,17 +316,39 @@ private fun ShowDialog(onUiEvent: (UiEventDetail) -> Unit) {
 fun ContentOverview(tv: Tv) {
     TextCategory(
         stringResource(R.string.title_description),
+        modifier = Modifier.padding(horizontal = paddingMedium),
     )
     Text(
         text = tv.overview.ifEmpty { stringResource(R.string.no_overview) },
         style = MaterialTheme.typography.bodySmall,
+        modifier = Modifier.padding(horizontal = paddingMedium),
     )
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun ContentTvDetailPreview() {
-    ContentOverview(
+    val tv =
+        Tv(
+            adult = false,
+            backdropPath = "/suopoADq0k8YZr4dQXcU6pToj6s.jpg",
+            firstAirDate = "2011-04-17",
+            genreIds = listOf(10765, 18, 80),
+            id = 1399,
+            name = "Game of Thrones",
+            originCountry = listOf("US"),
+            originalLanguage = "en",
+            originalName = "Game of Thrones",
+            overview = "Seven noble families fight for control of the mythical land of Westeros. Friction between the houses leads to full-scale war. All while a very ancient evil awakens in the farthest north. Amidst the war, a neglected military order of misfits, the Night's Watch, is all that stands between the realms of men and icy horrors beyond.",
+            popularity = 266.371,
+            posterPath = "/u3bZgnGQ9T01sWNhyveQz0wH0Hl.jpg",
+            voteAverage = 8.4,
+            voteCount = 11798,
+            isFavorite = false,
+            category = "tv",
+        )
+
+    /*ContentOverview(
         tv =
             Tv(
                 adult = false,
@@ -341,5 +368,5 @@ fun ContentTvDetailPreview() {
                 isFavorite = false,
                 category = "tv",
             ),
-    )
+    )*/
 }

@@ -4,14 +4,16 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -32,12 +34,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.instaleap.appkit.component.ConfirmRemoveFavoriteDialog
 import com.instaleap.appkit.component.ContentImage
@@ -51,8 +50,12 @@ import com.instaleap.appkit.component.TextCategory
 import com.instaleap.appkit.theme.paddingMedium
 import com.instaleap.appkit.theme.paddingXLarge
 import com.instaleap.appkit.theme.paddingXSmall
+import com.instaleap.appkit.theme.size120
+import com.instaleap.appkit.theme.size150
 import com.instaleap.appkit.theme.size20
 import com.instaleap.appkit.theme.size350
+import com.instaleap.appkit.util.toHour
+import com.instaleap.appkit.util.toVote
 import com.instaleap.core.CollectEffects
 import com.instaleap.domain.model.Movie
 import com.instaleap.movie.R
@@ -112,118 +115,100 @@ private fun ContentMovieDetail(
         ShowDialog(onUiEvent)
     }
 
-    ConstraintLayout(
+    Column(
         modifier =
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(paddingMedium),
     ) {
-        val (header, btnBack, btnFavorite, poster, infoMovie, infoDetail, overview) = createRefs()
+        ContentHeader(movie, onUiEvent, sharedTransitionScope, animatedVisibilityScope)
 
+        ContentInfoDetail(
+            modifier = Modifier.fillMaxWidth(),
+            uiState = uiState,
+        )
+
+        ContentOverview(uiState.movie)
+        uiState.image?.backdrops?.let { posters ->
+            if (posters.isNotEmpty()) {
+                ContentImage(posters.map { it.filePath })
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun ContentHeader(
+    movie: Movie,
+    onUiEvent: (UiEventDetail) -> Unit = {},
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+) {
+    Box {
         LoaderImage(
             url = movie.backdropPath,
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(size350)
-                    .constrainAs(header) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    },
+                    .height(size350),
         )
 
-        NavImageIcon(
-            modifier =
-                Modifier
-                    .constrainAs(btnBack) {
-                        top.linkTo(parent.top, paddingXLarge)
-                        start.linkTo(parent.start, paddingMedium)
-                    },
-            icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-        ) {
-            onUiEvent(UiEventDetail.NavigateToBack)
-        }
-
-        NavImageIcon(
-            modifier =
-                Modifier
-                    .constrainAs(btnFavorite) {
-                        top.linkTo(parent.top, paddingXLarge)
-                        end.linkTo(parent.end, margin = paddingMedium)
-                    },
-            icon =
-                if (movie.isFavorite) {
-                    Icons.Filled.Favorite
-                } else {
-                    Icons.Filled.FavoriteBorder
-                },
-            tint = if (movie.isFavorite) Color.Red else Color.Black,
-        ) {
-            onUiEvent(UiEventDetail.ToggleFavorite(movie))
-        }
-
-        with(sharedTransitionScope) {
-            ElevatedCard(
-                modifier =
-                    Modifier
-                        .padding(start = dimensionResource(id = com.instaleap.appkit.R.dimen.padding_medium))
-                        .defaultMinSize(
-                            minWidth = paddingMedium,
-                            minHeight = dimensionResource(id = com.instaleap.appkit.R.dimen.height_poster),
-                        ).fillMaxWidth(0.4f)
-                        .constrainAs(poster) {
-                            top.linkTo(header.bottom)
-                            bottom.linkTo(header.bottom)
-                            start.linkTo(parent.start)
-                        }.sharedElement(
-                            state = rememberSharedContentState(key = "movie_${movie.id}"),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                        ),
+        Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                LoaderImagePoster(movie.posterPath)
-            }
-        }
-
-        ContentInfoMovie(
-            modifier =
-                Modifier.constrainAs(infoMovie) {
-                    top.linkTo(header.bottom)
-                    bottom.linkTo(poster.bottom)
-                    start.linkTo(poster.end)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                },
-            uiState = uiState,
-        )
-
-        ContentInfoDetail(
-            modifier =
-                Modifier.constrainAs(infoDetail) {
-                    top.linkTo(poster.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.fillToConstraints
-                },
-            uiState = uiState,
-        )
-
-        Column(
-            modifier =
-                Modifier
-                    .padding(horizontal = paddingMedium)
-                    .constrainAs(overview) {
-                        top.linkTo(infoDetail.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        width = Dimension.fillToConstraints
-                    },
-        ) {
-            ContentOverview(uiState.movie)
-            uiState.image?.backdrops?.let { posters ->
-                if (posters.isNotEmpty()) {
-                    ContentImage(posters.map { it.filePath })
+                NavImageIcon(
+                    modifier =
+                        Modifier
+                            .wrapContentSize()
+                            .padding(top = paddingXLarge, start = paddingMedium),
+                    icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                ) {
+                    onUiEvent(UiEventDetail.NavigateToBack)
                 }
+
+                NavImageIcon(
+                    modifier =
+                        Modifier
+                            .wrapContentSize()
+                            .padding(top = paddingXLarge, end = paddingMedium)
+                            .align(alignment = Alignment.CenterVertically),
+                    icon =
+                        if (movie.isFavorite) {
+                            Icons.Filled.Favorite
+                        } else {
+                            Icons.Filled.FavoriteBorder
+                        },
+                    tint = if (movie.isFavorite) Color.Red else Color.Black,
+                ) {
+                    onUiEvent(UiEventDetail.ToggleFavorite(movie))
+                }
+            }
+
+            Spacer(modifier = Modifier.height(size150))
+
+            Row {
+                with(sharedTransitionScope) {
+                    ElevatedCard(
+                        modifier =
+                            Modifier
+                                .padding(start = paddingMedium)
+                                .sharedElement(
+                                    state = rememberSharedContentState(key = "movie_${movie.id}"),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                ),
+                    ) {
+                        LoaderImagePoster(movie.posterPath)
+                    }
+                }
+
+                ContentInfoMovie(
+                    modifier = Modifier.padding(horizontal = paddingMedium).padding(top = size120),
+                    uiState = UiStateDetail(movie = movie),
+                )
             }
         }
     }
@@ -234,13 +219,13 @@ private fun ContentInfoDetail(
     modifier: Modifier,
     uiState: UiStateDetail,
 ) {
-    Row(
-        modifier = modifier.padding(all = paddingMedium),
-    ) {
-        uiState.movieDetail?.let {
+    uiState.movieDetail?.let {
+        Row(
+            modifier = modifier.padding(all = paddingMedium),
+        ) {
             Column(modifier = Modifier.weight(1f)) {
                 ItemLabelRow(stringResource(R.string.label_runtime))
-                ItemRow(it.runtime.toString())
+                ItemRow(it.runtime.toHour())
             }
 
             Column(modifier = Modifier.weight(1f)) {
@@ -262,7 +247,7 @@ private fun ContentInfoMovie(
     uiState: UiStateDetail,
 ) {
     Column(
-        modifier = modifier.padding(all = paddingMedium),
+        modifier = modifier.padding(top = paddingMedium),
     ) {
         Text(
             text = uiState.movie?.title ?: "",
@@ -278,7 +263,7 @@ private fun ContentInfoMovie(
                 tint = Color(0xFFFEB800),
             )
             Text(
-                text = uiState.movie?.voteAverage.toString(),
+                text = uiState.movie?.voteAverage?.toVote() ?: "0",
                 modifier = Modifier.align(Alignment.CenterVertically),
                 style = MaterialTheme.typography.labelSmall,
             )
@@ -315,10 +300,12 @@ private fun ShowDialog(onUiEvent: (UiEventDetail) -> Unit) {
 private fun ContentOverview(movie: Movie) {
     TextCategory(
         stringResource(R.string.label_overview),
+        modifier = Modifier.padding(horizontal = paddingMedium),
     )
     Text(
         text = movie.overview,
         style = MaterialTheme.typography.bodySmall,
+        modifier = Modifier.padding(horizontal = paddingMedium),
     )
 }
 

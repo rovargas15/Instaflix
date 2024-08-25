@@ -1,5 +1,7 @@
 package com.instaleap.appkit.component
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -29,7 +31,7 @@ fun LoaderImage(
     AsyncImage(
         model = imageRequest,
         contentDescription = null,
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         contentScale = ContentScale.Crop,
     )
 }
@@ -52,8 +54,8 @@ fun LoaderImagePoster(
 
     AsyncImage(
         model = imageRequest,
-        contentDescription = null,
         modifier = modifier,
+        contentDescription = null,
         contentScale = ContentScale.Fit,
     )
 }

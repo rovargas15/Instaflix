@@ -12,6 +12,9 @@ val paddingXLarge = 32.dp
 
 val size35 = 35.dp
 val size20 = 20.dp
+val size120 = 120.dp
+val size150 = 150.dp
 val size170 = 170.dp
+val size250 = 250.dp
 val size300 = 300.dp
 val size350 = 350.dp
