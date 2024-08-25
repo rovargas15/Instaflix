@@ -1,12 +1,12 @@
 package com.instaleap.appkit.component
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.compose.AsyncImage
+import coil.memory.MemoryCache
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.instaleap.appkit.R
@@ -26,6 +26,7 @@ fun LoaderImage(
             .error(R.drawable.ic_no_image)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
+            .placeholderMemoryCacheKey(MemoryCache.Key("${BuildConfig.URL_BASE_IMG}original/$url"))
             .build()
 
     AsyncImage(
@@ -50,6 +51,7 @@ fun LoaderImagePoster(
             .error(R.drawable.ic_no_image)
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
+            .placeholderMemoryCacheKey(MemoryCache.Key("${BuildConfig.URL_BASE_IMG}w500/$url"))
             .build()
 
     AsyncImage(

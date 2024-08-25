@@ -182,7 +182,7 @@ fun MovieList(
                         posterPath = movie.posterPath,
                         modifier =
                             Modifier.sharedElement(
-                                state = rememberSharedContentState(key = "movie_${movie.id}"),
+                                state = rememberSharedContentState(key = "movie_${movies.first().category}_${movie.id}"),
                                 animatedVisibilityScope = animatedVisibilityScope,
                             ),
                     ) {
@@ -213,7 +213,7 @@ fun TvList(
                         posterPath = tv.posterPath,
                         modifier =
                             Modifier.sharedElement(
-                                state = rememberSharedContentState(key = "tv_${tv.id}"),
+                                state = rememberSharedContentState(key = "tv_${tv.category}_${tv.id}"),
                                 animatedVisibilityScope = animatedVisibilityScope,
                             ),
                     ) {

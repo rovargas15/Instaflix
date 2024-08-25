@@ -204,7 +204,7 @@ private fun MovieList(
                     ItemCard(
                         modifier =
                             Modifier.sharedElement(
-                                state = rememberSharedContentState(key = "movie_${movie.id}"),
+                                state = rememberSharedContentState(key = "movie_${movie.category}_${movie.id}"),
                                 animatedVisibilityScope = animatedVisibilityScope,
                             ),
                         posterPath = movie.posterPath,
@@ -220,6 +220,6 @@ private fun MovieList(
 @Preview
 @Composable
 private fun ContentEmptyPreview() {
-    ErrorScreen(type = "Movie", errorMessage =  "No Data") {
+    ErrorScreen(type = "Movie", errorMessage = "No Data") {
     }
 }

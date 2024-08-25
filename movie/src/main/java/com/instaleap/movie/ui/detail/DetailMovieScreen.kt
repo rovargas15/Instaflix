@@ -196,8 +196,9 @@ private fun ContentHeader(
                         modifier =
                             Modifier
                                 .padding(start = paddingMedium)
+                                .fillMaxSize(0.4f)
                                 .sharedElement(
-                                    state = rememberSharedContentState(key = "movie_${movie.id}"),
+                                    state = rememberSharedContentState(key = "movie_${movie.category}_${movie.id}"),
                                     animatedVisibilityScope = animatedVisibilityScope,
                                 ),
                     ) {

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,6 +54,8 @@ import com.instaleap.appkit.theme.paddingXMedium
 import com.instaleap.appkit.theme.paddingXSmall
 import com.instaleap.appkit.theme.size120
 import com.instaleap.appkit.theme.size150
+import com.instaleap.appkit.theme.size170
+import com.instaleap.appkit.theme.size250
 import com.instaleap.appkit.theme.size350
 import com.instaleap.appkit.util.toVote
 import com.instaleap.core.CollectEffects
@@ -210,8 +213,9 @@ private fun ContentHeader(
                         modifier =
                             Modifier
                                 .padding(start = paddingMedium)
+                                .fillMaxSize(0.4f)
                                 .sharedElement(
-                                    state = rememberSharedContentState(key = "tv_$category${tv.id}"),
+                                    state = rememberSharedContentState(key = "tv_${category}_${tv.id}"),
                                     animatedVisibilityScope = animatedVisibilityScope,
                                 ),
                     ) {

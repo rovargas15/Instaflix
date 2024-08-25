@@ -209,7 +209,7 @@ fun TvList(
                         posterPath = tv.posterPath,
                         modifier =
                             Modifier.sharedElement(
-                                state = rememberSharedContentState(key = "tv_$category${tv.id}"),
+                                state = rememberSharedContentState(key = "tv_${category}_${tv.id}"),
                                 animatedVisibilityScope = animatedVisibilityScope,
                             ),
                     ) {
