@@ -12,6 +12,7 @@ import com.instaleap.appkit.R
 
 @Composable
 fun ConfirmRemoveFavoriteDialog(
+    type: String,
     onDismissRequest: () -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
@@ -36,7 +37,7 @@ fun ConfirmRemoveFavoriteDialog(
             )
         },
         text = {
-            Text(text = stringResource(R.string.remove_movie_from_favorites_confirmation))
+            Text(text = stringResource(R.string.remove_movie_from_favorites_confirmation, type))
         },
     )
 }

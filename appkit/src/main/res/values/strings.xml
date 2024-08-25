@@ -4,10 +4,14 @@
     <string name="label_image">Imagenes</string>
 
     <string name="title_confirm">Confirmar</string>
-    <string name="remove_movie_from_favorites_confirmation">¿Seguro que deseas eliminar esta película y/o serie de tus favoritos?</string>
+    <string name="remove_movie_from_favorites_confirmation">¿Seguro que deseas eliminar esta %s de tus favoritos?</string>
     <string name="btn_ok">Ok</string>
     <string name="btn_cancel">Cancelar</string>
 
     <string name="message_error_default">Hubo un error al procesar tu solicitud. Inténtalo de nuevo más tarde.</string>
+    <string name="Message_error_default">¡Error! No se pudo cargar el listado de %s. Inténtalo de nuevo más tarde.</string>
+    <string name="movie">Película</string>
+    <string name="series">Series</string>
+    <string name="btn_try_again">Reintentar</string>
 
 </resources>

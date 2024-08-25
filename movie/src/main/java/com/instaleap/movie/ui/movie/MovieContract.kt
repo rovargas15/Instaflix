@@ -10,12 +10,16 @@ interface MovieContract {
         val listTopRated: List<Movie> = emptyList(),
         val listUpcoming: List<Movie> = emptyList(),
         val isError: Boolean = false,
-    )
+    ) {
+        fun isEmpty() = listPopular.isEmpty() && listTopRated.isEmpty() && listUpcoming.isEmpty()
+    }
 
     sealed class UiEventMovie {
         data class Navigate(
             val router: Router,
         ) : UiEventMovie()
+
+        data object Refresh : UiEventMovie()
     }
 
     sealed class EffectMovie {

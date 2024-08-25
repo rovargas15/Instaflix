@@ -5,6 +5,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -22,8 +23,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.instaleap.appkit.component.ErrorScreen
 import com.instaleap.appkit.component.ItemCard
 import com.instaleap.appkit.component.SnackBarError
 import com.instaleap.appkit.component.TextCategory
@@ -46,7 +49,7 @@ fun MovieScreen(
     HandleEvent(viewModel = viewModel, navigate = navigate)
     val uiState by viewModel.uiState.collectAsState()
 
-    ContentScreen(
+    TopBar(
         uiState,
         viewModel::onUiEvent,
         sharedTransitionScope = sharedTransitionScope,
@@ -74,7 +77,7 @@ private fun HandleEvent(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun ContentScreen(
+private fun TopBar(
     uiState: MovieContract.UiStateMovie,
     onUiEvent: (UiEventMovie) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
@@ -93,52 +96,21 @@ fun ContentScreen(
                 // TODO: implement loader here
             }
 
-            Column(
-                modifier =
-                    Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                if (uiState.listPopular.isNotEmpty()) {
-                    TextCategory(
-                        title = stringResource(R.string.title_popular),
-                        modifier = Modifier.padding(start = 10.dp),
-                    )
-                    MovieList(
-                        movies = uiState.listPopular,
-                        onUiEvent = onUiEvent,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
+            if (uiState.isEmpty()) {
+                ErrorScreen(
+                    type = stringResource(id = com.instaleap.appkit.R.string.movie),
+                    errorMessage = "No Data",
+                ) {
+                    onUiEvent(UiEventMovie.Refresh)
                 }
-
-                if (uiState.listTopRated.isNotEmpty()) {
-                    TextCategory(
-                        title = stringResource(R.string.title_top_rated),
-                        modifier = Modifier.padding(start = 10.dp),
-                    )
-                    MovieList(
-                        movies = uiState.listTopRated,
-                        onUiEvent = onUiEvent,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
-                }
-
-                if (uiState.listUpcoming.isNotEmpty()) {
-                    TextCategory(
-                        title = stringResource(R.string.title_upcoming),
-                        modifier = Modifier.padding(start = 10.dp),
-                    )
-                    MovieList(
-                        movies = uiState.listUpcoming,
-                        onUiEvent = onUiEvent,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
-                }
+            } else {
+                ContentScreen(
+                    innerPadding = innerPadding,
+                    uiState = uiState,
+                    onUiEvent = onUiEvent,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                )
             }
         },
         router = {
@@ -159,7 +131,65 @@ fun ContentScreen(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun MovieList(
+private fun ContentScreen(
+    innerPadding: PaddingValues,
+    uiState: MovieContract.UiStateMovie,
+    onUiEvent: (UiEventMovie) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+) {
+    Column(
+        modifier =
+            Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        if (uiState.listPopular.isNotEmpty()) {
+            TextCategory(
+                title = stringResource(R.string.title_popular),
+                modifier = Modifier.padding(start = 10.dp),
+            )
+            MovieList(
+                movies = uiState.listPopular,
+                onUiEvent = onUiEvent,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
+        }
+
+        if (uiState.listTopRated.isNotEmpty()) {
+            TextCategory(
+                title = stringResource(R.string.title_top_rated),
+                modifier = Modifier.padding(start = 10.dp),
+            )
+            MovieList(
+                movies = uiState.listTopRated,
+                onUiEvent = onUiEvent,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
+        }
+
+        if (uiState.listUpcoming.isNotEmpty()) {
+            TextCategory(
+                title = stringResource(R.string.title_upcoming),
+                modifier = Modifier.padding(start = 10.dp),
+            )
+            MovieList(
+                movies = uiState.listUpcoming,
+                onUiEvent = onUiEvent,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun MovieList(
     movies: List<Movie>,
     onUiEvent: (UiEventMovie) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
@@ -184,5 +214,12 @@ fun MovieList(
                 }
             },
         )
+    }
+}
+
+@Preview
+@Composable
+private fun ContentEmptyPreview() {
+    ErrorScreen(type = "Movie", errorMessage =  "No Data") {
     }
 }

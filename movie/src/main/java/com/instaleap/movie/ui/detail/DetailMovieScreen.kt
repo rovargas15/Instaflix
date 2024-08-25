@@ -284,6 +284,7 @@ private fun ContentInfoMovie(
 @Composable
 private fun ShowDialog(onUiEvent: (UiEventDetail) -> Unit) {
     ConfirmRemoveFavoriteDialog(
+        type = stringResource(id = com.instaleap.appkit.R.string.movie),
         onDismissRequest = {
             onUiEvent(UiEventDetail.DismissDialog)
         },

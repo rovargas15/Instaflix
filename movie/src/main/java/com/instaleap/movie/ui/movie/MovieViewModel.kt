@@ -10,9 +10,9 @@ import com.instaleap.domain.usecase.GetAllMovie
 import com.instaleap.domain.usecase.GetMovieByCategory
 import com.instaleap.movie.ui.movie.MovieContract.EffectMovie
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel
@@ -102,6 +102,10 @@ class MovieViewModel
             when (uiEvent) {
                 is MovieContract.UiEventMovie.Navigate -> {
                     sendEffect(EffectMovie.Navigate(uiEvent.router))
+                }
+
+                MovieContract.UiEventMovie.Refresh -> {
+                    fetchData()
                 }
             }
         }

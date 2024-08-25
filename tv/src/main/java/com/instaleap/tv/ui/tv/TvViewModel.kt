@@ -101,6 +101,10 @@ class TvViewModel
                 is UiEventTv.Navigate -> {
                     sendEffect(EffectTv.Navigate(uiEvent.router))
                 }
+
+                is UiEventTv.Refresh -> {
+                    fetchData()
+                }
             }
         }
     }

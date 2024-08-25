@@ -5,6 +5,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.instaleap.appkit.component.ErrorScreen
 import com.instaleap.appkit.component.ItemCard
 import com.instaleap.appkit.component.SnackBarError
 import com.instaleap.appkit.component.TextCategory
@@ -46,7 +48,7 @@ fun TvScreen(
 ) {
     HandleEvent(viewModel = viewModel, navigate = navigate)
     val uiState by viewModel.uiState.collectAsState()
-    ContentScreen(
+    TopBar(
         uiState = uiState,
         onUiEvent = viewModel::onUiEvent,
         sharedTransitionScope = sharedTransitionScope,
@@ -74,7 +76,7 @@ private fun HandleEvent(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun ContentScreen(
+fun TopBar(
     uiState: TvContract.UiStateTv,
     onUiEvent: (UiEventTv) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
@@ -94,55 +96,21 @@ fun ContentScreen(
                 // TODO: implement loader here
             }
 
-            Column(
-                modifier =
-                    Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                if (uiState.listPopular.isNotEmpty()) {
-                    TextCategory(
-                        title = stringResource(R.string.title_popular),
-                        modifier = Modifier.padding(start = 10.dp),
-                    )
-                    TvList(
-                        tv = uiState.listPopular,
-                        category = Category.POPULAR,
-                        onUiEvent = onUiEvent,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
+            if (uiState.isEmpty()) {
+                ErrorScreen(
+                    type = stringResource(id = com.instaleap.appkit.R.string.series),
+                    errorMessage = "No Data",
+                ) {
+                    onUiEvent(UiEventTv.Refresh)
                 }
-
-                if (uiState.listTopRated.isNotEmpty()) {
-                    TextCategory(
-                        title = stringResource(R.string.title_top_rated),
-                        modifier = Modifier.padding(start = 10.dp),
-                    )
-                    TvList(
-                        tv = uiState.listTopRated,
-                        category = Category.TOP_RATED,
-                        onUiEvent = onUiEvent,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
-                }
-
-                if (uiState.listOnTheAir.isNotEmpty()) {
-                    TextCategory(
-                        title = stringResource(R.string.title_on_the_air),
-                        modifier = Modifier.padding(start = 10.dp),
-                    )
-                    TvList(
-                        tv = uiState.listOnTheAir,
-                        category = Category.ON_THE_AIR,
-                        onUiEvent = onUiEvent,
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                    )
-                }
+            } else {
+                ContentScreen(
+                    innerPadding = innerPadding,
+                    uiState = uiState,
+                    onUiEvent = onUiEvent,
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                )
             }
         },
         router = {
@@ -159,6 +127,67 @@ fun ContentScreen(
             }
         },
     )
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun ContentScreen(
+    innerPadding: PaddingValues,
+    uiState: TvContract.UiStateTv,
+    onUiEvent: (UiEventTv) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+) {
+    Column(
+        modifier =
+            Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+        if (uiState.listPopular.isNotEmpty()) {
+            TextCategory(
+                title = stringResource(R.string.title_popular),
+                modifier = Modifier.padding(start = 10.dp),
+            )
+            TvList(
+                tv = uiState.listPopular,
+                category = Category.POPULAR,
+                onUiEvent = onUiEvent,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
+        }
+
+        if (uiState.listTopRated.isNotEmpty()) {
+            TextCategory(
+                title = stringResource(R.string.title_top_rated),
+                modifier = Modifier.padding(start = 10.dp),
+            )
+            TvList(
+                tv = uiState.listTopRated,
+                category = Category.TOP_RATED,
+                onUiEvent = onUiEvent,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
+        }
+
+        if (uiState.listOnTheAir.isNotEmpty()) {
+            TextCategory(
+                title = stringResource(R.string.title_on_the_air),
+                modifier = Modifier.padding(start = 10.dp),
+            )
+            TvList(
+                tv = uiState.listOnTheAir,
+                category = Category.ON_THE_AIR,
+                onUiEvent = onUiEvent,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
