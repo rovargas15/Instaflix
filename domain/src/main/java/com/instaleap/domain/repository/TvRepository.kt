@@ -22,7 +22,6 @@ interface TvRepository {
 
     suspend fun getPaginatedTv(
         category: String,
-        pageSize: Int,
         page: Int,
     ): Result<DataBase<Tv>>
 }

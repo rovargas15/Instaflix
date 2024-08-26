@@ -14,20 +14,17 @@ import io.ktor.client.HttpClient
 @Module
 @InstallIn(ViewModelComponent::class)
 object ImageModule {
+    @Provides
+    @ViewModelScoped
+    fun imageRepositoryImplProvider(dataSource: ImageDataSource): ImageRepository =
+        ImageRepositoryImpl(
+            imageDataSource = dataSource,
+        )
 
     @Provides
     @ViewModelScoped
-    fun imageRepositoryImplProvider(
-        dataSource: ImageDataSource,
-    ): ImageRepository = ImageRepositoryImpl(
-        imageDataSource = dataSource
-    )
-
-    @Provides
-    @ViewModelScoped
-    fun imageDataSourceProvider(
-        client: HttpClient,
-    ): ImageApi = ImageDataSource(
-        client = client
-    )
+    fun imageDataSourceProvider(client: HttpClient): ImageApi =
+        ImageDataSource(
+            client = client,
+        )
 }

@@ -1,5 +1,6 @@
 package com.instaleap.data.repository
 
+import androidx.annotation.VisibleForTesting
 import com.instaleap.data.local.database.InstaflixDatabase
 import com.instaleap.data.remote.datasource.MovieDataSource
 import com.instaleap.data.remote.response.BaseResponse
@@ -49,7 +50,6 @@ class MovieRepositoryImpl
 
         override suspend fun getPaginatedMovies(
             category: String,
-            pageSize: Int,
             page: Int,
         ): Result<DataBase<Movie>> =
             launchResultSafe {
@@ -61,7 +61,8 @@ class MovieRepositoryImpl
                 resultsChange.map { it.toDomain() }
             }
 
-        private suspend fun saveMovies(
+        @VisibleForTesting
+        internal suspend fun saveMovies(
             response: BaseResponse<MovieResponse>,
             category: String = "",
         ): DataBase<Movie> {

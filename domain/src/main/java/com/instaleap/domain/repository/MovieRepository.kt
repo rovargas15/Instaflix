@@ -20,7 +20,6 @@ interface MovieRepository {
 
     suspend fun getPaginatedMovies(
         category: String,
-        pageSize: Int,
         page: Int,
     ): Result<DataBase<Movie>>
 

@@ -1,5 +1,6 @@
 package com.instaleap.data.repository
 
+import androidx.annotation.VisibleForTesting
 import com.instaleap.data.local.database.InstaflixDatabase
 import com.instaleap.data.remote.datasource.TvDataSource
 import com.instaleap.data.remote.response.BaseResponse
@@ -53,14 +54,14 @@ class TvRepositoryImpl
 
         override suspend fun getPaginatedTv(
             category: String,
-            pageSize: Int,
             page: Int,
         ): Result<DataBase<Tv>> =
             launchResultSafe {
                 saveTv(dataSourceRemote.getTvByCategory(category, page), category)
             }
 
-        private suspend fun saveTv(
+        @VisibleForTesting
+        internal suspend fun saveTv(
             response: BaseResponse<TvResponse>,
             category: String = "",
         ): DataBase<Tv> {

@@ -37,10 +37,18 @@ android {
             '**/*$Parcelable*.*',
             '**/*_Factory*.*',
             '**/*_Provide*Factory*.*',
-            '**/commons/**/*.*',
+
             '**/di/**/*.*',
-            '**/domain/entity/**/*.*',
-            '**/data/model/**/*.*',
+
+            // Module data
+            '**/data/local/**/*.*',
+            '**/data/util/*',
+            '**/data/remote/client/*',
+            '**/data/remote/response/*',
+            '**/Response*.*',
+
+            // Module domain
+            '**/domain/model/*',
     ]
 
     def debugTree = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes", excludes: fileFilter)
@@ -50,7 +58,8 @@ android {
     def reportDir = "${buildDir}/reports/jacoco/jacocoTestReport/html/index.html"
 
     // Tarea para generar el reporte de JaCoCo
-    task jacocoTestReport(type: JacocoReport, dependsOn: 'testDebugUnitTest') {
+    tasks.register('jacocoTestReport', JacocoReport) {
+        dependsOn 'testDebugUnitTest'
         group = 'jacocoReport'
         description = 'Genera un reporte de cobertura de código con JaCoCo.'
 
@@ -65,7 +74,8 @@ android {
     }
 
     // Tarea para verificar la cobertura de JaCoCo
-    task jacocoTestCoverageVerification(type: JacocoCoverageVerification, dependsOn: 'jacocoTestReport') {
+    tasks.register('jacocoTestCoverageVerification', JacocoCoverageVerification) {
+        dependsOn 'jacocoTestReport'
         group = 'jacocoReport'
         description = 'Verifica la cobertura de código con JaCoCo.'
 
