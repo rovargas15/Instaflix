@@ -15,6 +15,9 @@ jobs:
         with:
           submodules: true
 
+      - name: Make Gradle Wrapper Executable
+        run: chmod +x ./gradlew
+
       - name: Set Up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -24,8 +27,8 @@ jobs:
       - name: Set Up Android SDK
         uses: android-actions/setup-android@v2
         with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
+          api-level: 30
+          target: android-30
           components: build-tools-30.0.2
 
   lint:
@@ -37,7 +40,7 @@ jobs:
     steps:
       - name: Lint Code for Module
         run: |
-          echo "Running lint for module: ${{ matrix.module }}..."
+          echo "Starting lint for module: ${{ matrix.module }}..."
           ./gradlew :${{ matrix.module }}:lint
 
   detekt:
