@@ -31,8 +31,20 @@ jobs:
           target: android-30
           components: build-tools-30.0.2
 
-  lint:
+  build:
     needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [ core, data, domain, favorite, movie, tv ]
+    steps:
+      - name: Build Module
+        run: |
+          echo "Building module: ${{ matrix.module }}..."
+          ./gradlew :${{ matrix.module }}:assembleDebug -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
+
+  lint:
+    needs: build  # Changed dependency to build stage
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -40,11 +52,11 @@ jobs:
     steps:
       - name: Lint Code for Module
         run: |
-          echo "Starting lint for module: ${{ matrix.module }}..."
+          echo "Running lint for module: ${{ matrix.module }}..."
           ./gradlew :${{ matrix.module }}:lint
 
   detekt:
-    needs: lint
+    needs: lint  # Changed dependency to lint stage
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -56,7 +68,7 @@ jobs:
           ./gradlew :${{ matrix.module }}:detekt
 
   test:
-    needs: detekt
+    needs: detekt  # Changed dependency to detekt stage
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -68,7 +80,7 @@ jobs:
           ./gradlew :${{ matrix.module }}:testDebugUnitTest -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
 
   coverage:
-    needs: test
+    needs: test  # Changed dependency to test stage
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -86,19 +98,5 @@ jobs:
 
       - name: Clean Up JaCoCo Reports
         run: |
-          echo "Deleting JaCoCo reports for module: ${{ matrix.module }}..."
+          echo "Deleting JaCoCo reports for module: ${{ matrix.module }}..." (Optional step)
           rm -rf ${{ matrix.module }}/build/reports/jacoco/
-
-  build:
-    needs: coverage
-    runs-on: ubuntu-latest
-    steps:
-      - name: Build APK
-        run: |
-          echo "Building APK for app module..."
-          ./gradlew :app:assembleDebug -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
-
-      - name: Find APK Path
-        run: |
-          APK_PATH=$(find app/build/outputs/apk/debug/ -name "*.apk")
-          echo "APK generated at: $APK_PATH"
