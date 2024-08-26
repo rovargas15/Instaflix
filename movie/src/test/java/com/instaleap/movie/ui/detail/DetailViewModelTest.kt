@@ -74,7 +74,7 @@ class DetailViewModelTest {
         }
 
     @Test
-    fun `when fetchImage is called, get image and update state`() =
+    fun `when fetchData is called, get image and update state`() =
         runTest {
             val movieId = 1
             val image = mockk<Image>()
@@ -84,10 +84,16 @@ class DetailViewModelTest {
                     PATH_IMAGE,
                 )
             } returns Result.success(image)
+            val movieDetail = mockk<MovieDetail>()
+            coEvery { getDetailUseCase.invoke(movieId) } returns Result.success(movieDetail)
+            val movie = mockk<Movie>()
+            coEvery { getMovieByIdUseCase.invoke(movieId) } returns flowOf(movie)
 
-            viewModel.fetchImage(movieId)
+            viewModel.fetchData(1)
 
+            Assert.assertEquals(viewModel.uiState.value.movieDetail, movieDetail)
             Assert.assertEquals(viewModel.uiState.value.image, image)
+            Assert.assertEquals(viewModel.uiState.value.movie, movie)
         }
 
     @Test
@@ -104,18 +110,6 @@ class DetailViewModelTest {
             viewModel.fetchImage(movieId)
 
             Assert.assertEquals(viewModel.uiState.value.isError, true)
-        }
-
-    @Test
-    fun `when fetchDetail is called, get movie detail and update state`() =
-        runTest {
-            val movieId = 1
-            val movieDetail = mockk<MovieDetail>()
-            coEvery { getDetailUseCase.invoke(movieId) } returns Result.success(movieDetail)
-
-            viewModel.fetchDetail(movieId)
-
-            Assert.assertEquals(viewModel.uiState.value.movieDetail, movieDetail)
         }
 
     @Test

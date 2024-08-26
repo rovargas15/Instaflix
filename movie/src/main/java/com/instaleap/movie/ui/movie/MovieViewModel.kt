@@ -37,7 +37,6 @@ class MovieViewModel
                             handleSuccess(category, it)
                         },
                         onFailure = {
-                            Log.e("MovieViewModel", "getMovies: $it")
                             handleError()
                         },
                     )
