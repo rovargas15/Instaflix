@@ -1,49 +1,44 @@
-name: Android CI
+name: Android CI/CD Pipeline
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - master
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
 
 jobs:
-  setup:
+  build:
+    name: Build and Test
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          submodules: true
 
-      - name: Make Gradle Wrapper Executable
-        run: chmod +x ./gradlew
-
-      - name: Set Up JDK 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'zulu'
           java-version: '17'
+          distribution: 'temurin'
 
-      - name: Set Up Android SDK
-        uses: android-actions/setup-android@v2
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
         with:
-          api-level: 30
-          target: android-30
-          components: build-tools-30.0.2
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
 
-  build:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check for gradlew and set permissions
-        run: |
-          if [ ! -f ./gradlew ]; then
-            echo "gradlew file not found. Please ensure it exists in your project's root directory."
-            exit 1
-          fi
-          chmod +x ./gradlew
+      - name: Build with Gradle
+        run: ./gradlew clean build
 
-      - name: Build Module
-        run: |
-          echo "Building module: ${{ matrix.module }}..."
-          ./gradlew :${{ matrix.module }}:assembleDebug -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
+      - name: Run unit tests
+        run: ./gradlew test
+
+      - name: Run lint
+        run: ./gradlew lint
+
+      - name: Run Detekt
+        run: ./gradlew detekt
