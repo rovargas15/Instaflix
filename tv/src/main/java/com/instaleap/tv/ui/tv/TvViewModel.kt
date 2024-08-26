@@ -5,8 +5,8 @@ import com.instaleap.core.MviViewModel
 import com.instaleap.core.route.Category
 import com.instaleap.domain.model.DataBase
 import com.instaleap.domain.model.Tv
-import com.instaleap.domain.usecase.GetAllTv
-import com.instaleap.domain.usecase.GetTvByCategory
+import com.instaleap.domain.usecase.GetAllTvUseCase
+import com.instaleap.domain.usecase.GetTvByCategoryUseCase
 import com.instaleap.tv.ui.tv.TvContract.EffectTv
 import com.instaleap.tv.ui.tv.TvContract.UiEventTv
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +18,8 @@ import javax.inject.Inject
 class TvViewModel
     @Inject
     constructor(
-        private val getTvByCategory: GetTvByCategory,
-        private val getAllTv: GetAllTv,
+        private val getTvByCategoryUseCase: GetTvByCategoryUseCase,
+        private val getAllTvUseCase: GetAllTvUseCase,
         private val coroutineDispatcher: CoroutineDispatcher,
     ) : MviViewModel<TvContract.UiStateTv, UiEventTv, EffectTv>() {
         private val categories = listOf(Category.POPULAR, Category.TOP_RATED, Category.ON_THE_AIR)
@@ -32,7 +32,7 @@ class TvViewModel
                     copy(isLoading = true)
                 }
                 categories.forEach { category ->
-                    getTvByCategory.invoke(category).fold(
+                    getTvByCategoryUseCase.invoke(category).fold(
                         onSuccess = {
                             handleSuccess(category, it)
                         },
@@ -52,7 +52,7 @@ class TvViewModel
                 copy(isError = true)
             }
             viewModelScope.launch(coroutineDispatcher) {
-                getAllTv.invoke().collect {
+                getAllTvUseCase.invoke().collect {
                     updateState {
                         copy(
                             listPopular = it.filter { it.category == Category.POPULAR },

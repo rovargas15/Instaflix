@@ -6,8 +6,8 @@ import com.instaleap.core.MviViewModel
 import com.instaleap.core.route.Category
 import com.instaleap.domain.model.DataBase
 import com.instaleap.domain.model.Movie
-import com.instaleap.domain.usecase.GetAllMovie
-import com.instaleap.domain.usecase.GetMovieByCategory
+import com.instaleap.domain.usecase.GetAllMovieUseCase
+import com.instaleap.domain.usecase.GetMovieByCategoryUseCase
 import com.instaleap.movie.ui.movie.MovieContract.EffectMovie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,8 +18,8 @@ import kotlinx.coroutines.launch
 class MovieViewModel
     @Inject
     constructor(
-        private val getMovieByCategory: GetMovieByCategory,
-        private val getAllMovie: GetAllMovie,
+        private val getMovieByCategoryUseCase: GetMovieByCategoryUseCase,
+        private val getAllMovieUseCase: GetAllMovieUseCase,
         private val coroutineDispatcher: CoroutineDispatcher,
     ) : MviViewModel<MovieContract.UiStateMovie, MovieContract.UiEventMovie, EffectMovie>() {
         private val categories = listOf(Category.POPULAR, Category.TOP_RATED, Category.UPCOMING)
@@ -32,7 +32,7 @@ class MovieViewModel
                     copy(isLoading = true)
                 }
                 categories.forEach { category ->
-                    getMovieByCategory.invoke(category).fold(
+                    getMovieByCategoryUseCase.invoke(category).fold(
                         onSuccess = {
                             handleSuccess(category, it)
                         },
@@ -85,7 +85,7 @@ class MovieViewModel
             }
 
             viewModelScope.launch(coroutineDispatcher) {
-                getAllMovie.invoke().collect {
+                getAllMovieUseCase.invoke().collect {
                     updateState {
                         copy(
                             listPopular = it.filter { it.category == Category.POPULAR },

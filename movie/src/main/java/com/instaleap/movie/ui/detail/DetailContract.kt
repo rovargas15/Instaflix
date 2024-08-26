@@ -7,7 +7,7 @@ import com.instaleap.domain.model.MovieDetail
 interface DetailContract {
     data class UiStateDetail(
         val isLoading: Boolean = false,
-        val error: Boolean = false,
+        val isError: Boolean = false,
         val movie: Movie? = null,
         val movieDetail: MovieDetail? = null,
         val image: Image? = null,
@@ -21,7 +21,9 @@ interface DetailContract {
 
         data object NavigateToBack : UiEventDetail()
 
-        data object RemoveFavorite : UiEventDetail()
+        data class RemoveFavorite(
+            val movie: Movie,
+        ) : UiEventDetail()
 
         data object DismissDialog : UiEventDetail()
     }

@@ -1,10 +1,10 @@
 package com.instaleap.tv.di
 
 import com.instaleap.domain.repository.TvRepository
-import com.instaleap.domain.usecase.GetImageById
-import com.instaleap.domain.usecase.GetTvById
-import com.instaleap.domain.usecase.GetTvDetailById
-import com.instaleap.domain.usecase.UpdateTv
+import com.instaleap.domain.usecase.GetImageByIdUseCase
+import com.instaleap.domain.usecase.GetTvByIdUseCase
+import com.instaleap.domain.usecase.GetTvDetailByIdUseCase
+import com.instaleap.domain.usecase.UpdateTvUseCase
 import com.instaleap.tv.ui.detail.DetailViewModel
 import dagger.Module
 import dagger.Provides
@@ -18,29 +18,29 @@ import kotlinx.coroutines.CoroutineDispatcher
 object TvDetailModule {
     @Provides
     @ViewModelScoped
-    fun getTvDetailByIdProvider(repository: TvRepository) = GetTvDetailById(repository)
+    fun getTvDetailByIdProvider(repository: TvRepository) = GetTvDetailByIdUseCase(repository)
 
     @Provides
     @ViewModelScoped
-    fun getTvByIdProvider(repository: TvRepository) = GetTvById(repository)
+    fun getTvByIdProvider(repository: TvRepository) = GetTvByIdUseCase(repository)
 
     @Provides
     @ViewModelScoped
-    fun updateTvProvider(repository: TvRepository) = UpdateTv(repository)
+    fun updateTvProvider(repository: TvRepository) = UpdateTvUseCase(repository)
 
     @Provides
     @ViewModelScoped
     fun detailViewModelProvider(
-        getDetailUseCase: GetTvDetailById,
-        getMovieById: GetTvById,
-        updateTv: UpdateTv,
-        getImageById: GetImageById,
+        getDetailUseCase: GetTvDetailByIdUseCase,
+        getMovieById: GetTvByIdUseCase,
+        updateTvUseCase: UpdateTvUseCase,
+        getImageByIdUseCase: GetImageByIdUseCase,
         coroutineDispatcher: CoroutineDispatcher,
     ) = DetailViewModel(
         getDetailUseCase = getDetailUseCase,
         getMovieById = getMovieById,
-        updateTv = updateTv,
-        getImageById = getImageById,
+        updateTvUseCase = updateTvUseCase,
+        getImageByIdUseCase = getImageByIdUseCase,
         coroutineDispatcher = coroutineDispatcher,
     )
 }

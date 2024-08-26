@@ -4,8 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.instaleap.core.MviViewModel
 import com.instaleap.domain.model.Movie
 import com.instaleap.domain.model.Tv
-import com.instaleap.domain.usecase.GetFavoriteMovie
-import com.instaleap.domain.usecase.GetFavoriteTv
+import com.instaleap.domain.usecase.GetFavoriteMovieUseCase
+import com.instaleap.domain.usecase.GetFavoriteTvUseCase
 import com.instaleap.favorite.ui.favorite.FavoriteContract.Effect
 import com.instaleap.favorite.ui.favorite.FavoriteContract.UiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +18,8 @@ import javax.inject.Inject
 class FavoriteViewModel
     @Inject
     constructor(
-        private val getFavoriteMovie: GetFavoriteMovie,
-        private val getFavoriteTv: GetFavoriteTv,
+        private val getFavoriteMovieUseCase: GetFavoriteMovieUseCase,
+        private val getFavoriteTvUseCase: GetFavoriteTvUseCase,
         private val coroutineDispatcher: CoroutineDispatcher,
     ) : MviViewModel<FavoriteContract.UiState, UiEvent, Effect>() {
         override fun initialState() = FavoriteContract.UiState()
@@ -29,9 +29,9 @@ class FavoriteViewModel
                 copy(isLoading = true)
             }
             viewModelScope.launch(coroutineDispatcher) {
-                getFavoriteMovie
+                getFavoriteMovieUseCase
                     .invoke()
-                    .combine(getFavoriteTv.invoke()) { movie, tv ->
+                    .combine(getFavoriteTvUseCase.invoke()) { movie, tv ->
                         mapOf(1 to movie, 2 to tv)
                     }.collect {
                         updateState {

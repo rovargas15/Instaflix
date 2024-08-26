@@ -1,8 +1,8 @@
 package com.instaleap.tv.di
 
 import com.instaleap.domain.repository.TvRepository
-import com.instaleap.domain.usecase.GetAllTv
-import com.instaleap.domain.usecase.GetTvByCategory
+import com.instaleap.domain.usecase.GetAllTvUseCase
+import com.instaleap.domain.usecase.GetTvByCategoryUseCase
 import com.instaleap.tv.ui.tv.TvViewModel
 import dagger.Module
 import dagger.Provides
@@ -16,17 +16,17 @@ import kotlinx.coroutines.CoroutineDispatcher
 object TvModule {
     @Provides
     @ViewModelScoped
-    fun getTvByCategoryProvider(repository: TvRepository) = GetTvByCategory(repository)
+    fun getTvByCategoryProvider(repository: TvRepository) = GetTvByCategoryUseCase(repository)
 
     @Provides
     @ViewModelScoped
-    fun getAllTvProvider(repository: TvRepository) = GetAllTv(repository)
+    fun getAllTvProvider(repository: TvRepository) = GetAllTvUseCase(repository)
 
     @Provides
     @ViewModelScoped
     fun tvViewModelProvider(
-        getTvByCategory: GetTvByCategory,
-        getAllTv: GetAllTv,
+        getTvByCategoryUseCase: GetTvByCategoryUseCase,
+        getAllTvUseCase: GetAllTvUseCase,
         coroutineDispatcher: CoroutineDispatcher,
-    ) = TvViewModel(getTvByCategory, getAllTv, coroutineDispatcher)
+    ) = TvViewModel(getTvByCategoryUseCase, getAllTvUseCase, coroutineDispatcher)
 }

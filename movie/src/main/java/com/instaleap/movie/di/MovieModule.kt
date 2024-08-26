@@ -1,8 +1,8 @@
 package com.instaleap.movie.di
 
 import com.instaleap.domain.repository.MovieRepository
-import com.instaleap.domain.usecase.GetAllMovie
-import com.instaleap.domain.usecase.GetMovieByCategory
+import com.instaleap.domain.usecase.GetAllMovieUseCase
+import com.instaleap.domain.usecase.GetMovieByCategoryUseCase
 import com.instaleap.movie.ui.movie.MovieViewModel
 import dagger.Module
 import dagger.Provides
@@ -16,21 +16,21 @@ import kotlinx.coroutines.CoroutineDispatcher
 object MovieModule {
     @Provides
     @ViewModelScoped
-    fun getMovieByCategoryProvider(repository: MovieRepository) = GetMovieByCategory(repository)
+    fun getMovieByCategoryProvider(repository: MovieRepository) = GetMovieByCategoryUseCase(repository)
 
     @Provides
     @ViewModelScoped
-    fun getAllMovieProvider(repository: MovieRepository) = GetAllMovie(repository)
+    fun getAllMovieProvider(repository: MovieRepository) = GetAllMovieUseCase(repository)
 
     @Provides
     @ViewModelScoped
     fun movieViewModelProvider(
-        getMovieByCategory: GetMovieByCategory,
-        getAllMovie: GetAllMovie,
+        getMovieByCategoryUseCase: GetMovieByCategoryUseCase,
+        getAllMovieUseCase: GetAllMovieUseCase,
         coroutineDispatcher: CoroutineDispatcher,
     ) = MovieViewModel(
-        getMovieByCategory = getMovieByCategory,
-        getAllMovie = getAllMovie,
+        getMovieByCategoryUseCase = getMovieByCategoryUseCase,
+        getAllMovieUseCase = getAllMovieUseCase,
         coroutineDispatcher = coroutineDispatcher,
     )
 }

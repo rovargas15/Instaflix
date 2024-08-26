@@ -1,41 +1,57 @@
 package com.instaleap.movie.ui.detail
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
 import com.instaleap.core.MviViewModel
-import com.instaleap.domain.usecase.GetImageById
-import com.instaleap.domain.usecase.GetMovieById
-import com.instaleap.domain.usecase.GetMovieDetailById
-import com.instaleap.domain.usecase.UpdateMovie
+import com.instaleap.domain.model.Movie
+import com.instaleap.domain.usecase.GetImageByIdUseCase
+import com.instaleap.domain.usecase.GetMovieByIdUseCase
+import com.instaleap.domain.usecase.GetMovieDetailByIdUseCase
+import com.instaleap.domain.usecase.UpdateMovieUseCase
 import com.instaleap.movie.ui.detail.DetailContract.EffectDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel
     @Inject
     constructor(
-        private val getDetailUseCase: GetMovieDetailById,
-        private val getMovieById: GetMovieById,
-        private val updateMovie: UpdateMovie,
-        private val getImageById: GetImageById,
+        private val getDetailUseCase: GetMovieDetailByIdUseCase,
+        private val getMovieByIdUseCase: GetMovieByIdUseCase,
+        private val updateMovieUseCase: UpdateMovieUseCase,
+        private val getImageByIdUseCase: GetImageByIdUseCase,
         private val coroutineDispatcher: CoroutineDispatcher,
     ) : MviViewModel<DetailContract.UiStateDetail, DetailContract.UiEventDetail, EffectDetail>() {
         override fun initialState() = DetailContract.UiStateDetail()
 
         fun fetchData(movieId: Int) {
+            fetchImage(movieId)
+            fetchDetail(movieId)
+            fetchMovie(movieId)
+        }
+
+        @VisibleForTesting
+        internal fun fetchImage(movieId: Int) {
             viewModelScope.launch(coroutineDispatcher) {
-                getImageById.invoke(movieId, PATH_IMAGE).fold(
+                getImageByIdUseCase.invoke(movieId, PATH_IMAGE).fold(
                     onSuccess = {
                         updateState {
                             copy(image = it)
                         }
                     },
                     onFailure = {
+                        updateState {
+                            copy(isError = true)
+                        }
                     },
                 )
             }
+        }
+
+        @VisibleForTesting
+        internal fun fetchDetail(movieId: Int) {
             viewModelScope.launch(coroutineDispatcher) {
                 getDetailUseCase.invoke(movieId).fold(
                     onSuccess = {
@@ -44,11 +60,18 @@ class DetailViewModel
                         }
                     },
                     onFailure = {
+                        updateState {
+                            copy(isError = true)
+                        }
                     },
                 )
             }
+        }
+
+        @VisibleForTesting
+        internal fun fetchMovie(movieId: Int) {
             viewModelScope.launch(coroutineDispatcher) {
-                getMovieById.invoke(movieId).collect {
+                getMovieByIdUseCase.invoke(movieId).collect {
                     updateState {
                         copy(movie = it)
                     }
@@ -56,11 +79,10 @@ class DetailViewModel
             }
         }
 
-        private fun updateMovie() {
+        @VisibleForTesting
+        internal fun updateMovie(movie: Movie) {
             viewModelScope.launch(coroutineDispatcher) {
-                currentUiState.movie?.let {
-                    updateMovie.invoke(movie = it.copy(isFavorite = !it.isFavorite))
-                }
+                updateMovieUseCase.invoke(movie = movie.copy(isFavorite = !movie.isFavorite))
             }
         }
 
@@ -72,7 +94,7 @@ class DetailViewModel
                             copy(isShowDialog = true)
                         }
                     } else {
-                        updateMovie()
+                        updateMovie(uiEvent.movie)
                     }
                 }
 
@@ -81,7 +103,7 @@ class DetailViewModel
                 }
 
                 is DetailContract.UiEventDetail.RemoveFavorite -> {
-                    updateMovie()
+                    updateMovie(uiEvent.movie)
                     updateState {
                         copy(isShowDialog = false)
                     }
@@ -96,4 +118,5 @@ class DetailViewModel
         }
     }
 
-private const val PATH_IMAGE = "movie"
+@VisibleForTesting
+internal const val PATH_IMAGE = "movie"

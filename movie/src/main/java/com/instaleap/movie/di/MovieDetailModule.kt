@@ -1,10 +1,10 @@
 package com.instaleap.movie.di
 
 import com.instaleap.domain.repository.MovieRepository
-import com.instaleap.domain.usecase.GetImageById
-import com.instaleap.domain.usecase.GetMovieById
-import com.instaleap.domain.usecase.GetMovieDetailById
-import com.instaleap.domain.usecase.UpdateMovie
+import com.instaleap.domain.usecase.GetImageByIdUseCase
+import com.instaleap.domain.usecase.GetMovieByIdUseCase
+import com.instaleap.domain.usecase.GetMovieDetailByIdUseCase
+import com.instaleap.domain.usecase.UpdateMovieUseCase
 import com.instaleap.movie.ui.detail.DetailViewModel
 import dagger.Module
 import dagger.Provides
@@ -18,29 +18,29 @@ import kotlinx.coroutines.CoroutineDispatcher
 object MovieDetailModule {
     @Provides
     @ViewModelScoped
-    fun getMovieDetailByIdProvider(repository: MovieRepository) = GetMovieDetailById(repository)
+    fun getMovieDetailByIdProvider(repository: MovieRepository) = GetMovieDetailByIdUseCase(repository)
 
     @Provides
     @ViewModelScoped
-    fun getMovieByIdProvider(repository: MovieRepository) = GetMovieById(repository)
+    fun getMovieByIdProvider(repository: MovieRepository) = GetMovieByIdUseCase(repository)
 
     @Provides
     @ViewModelScoped
-    fun updateMovieProvider(repository: MovieRepository) = UpdateMovie(repository)
+    fun updateMovieProvider(repository: MovieRepository) = UpdateMovieUseCase(repository)
 
     @Provides
     @ViewModelScoped
     fun detailViewModelProvider(
-        getDetailUseCase: GetMovieDetailById,
-        getMovieById: GetMovieById,
-        updateMovie: UpdateMovie,
-        getImageById: GetImageById,
+        getDetailUseCase: GetMovieDetailByIdUseCase,
+        getMovieByIdUseCase: GetMovieByIdUseCase,
+        updateMovieUseCase: UpdateMovieUseCase,
+        getImageByIdUseCase: GetImageByIdUseCase,
         coroutineDispatcher: CoroutineDispatcher,
     ) = DetailViewModel(
         getDetailUseCase = getDetailUseCase,
-        getMovieById = getMovieById,
-        updateMovie = updateMovie,
-        getImageById = getImageById,
+        getMovieByIdUseCase = getMovieByIdUseCase,
+        updateMovieUseCase = updateMovieUseCase,
+        getImageByIdUseCase = getImageByIdUseCase,
         coroutineDispatcher = coroutineDispatcher,
     )
 }

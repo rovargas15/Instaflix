@@ -3,10 +3,10 @@ package com.instaleap.tv.ui.detail
 import androidx.lifecycle.viewModelScope
 import com.instaleap.core.MviViewModel
 import com.instaleap.core.route.Router
-import com.instaleap.domain.usecase.GetImageById
-import com.instaleap.domain.usecase.GetTvById
-import com.instaleap.domain.usecase.GetTvDetailById
-import com.instaleap.domain.usecase.UpdateTv
+import com.instaleap.domain.usecase.GetImageByIdUseCase
+import com.instaleap.domain.usecase.GetTvByIdUseCase
+import com.instaleap.domain.usecase.GetTvDetailByIdUseCase
+import com.instaleap.domain.usecase.UpdateTvUseCase
 import com.instaleap.tv.ui.detail.DetailContract.EffectDetail
 import com.instaleap.tv.ui.detail.DetailContract.UiEventDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,17 +18,17 @@ import javax.inject.Inject
 class DetailViewModel
     @Inject
     constructor(
-        private val getDetailUseCase: GetTvDetailById,
-        private val getMovieById: GetTvById,
-        private val updateTv: UpdateTv,
-        private val getImageById: GetImageById,
+        private val getDetailUseCase: GetTvDetailByIdUseCase,
+        private val getMovieById: GetTvByIdUseCase,
+        private val updateTvUseCase: UpdateTvUseCase,
+        private val getImageByIdUseCase: GetImageByIdUseCase,
         private val coroutineDispatcher: CoroutineDispatcher,
     ) : MviViewModel<DetailContract.UiStateDetail, UiEventDetail, EffectDetail>() {
         override fun initialState() = DetailContract.UiStateDetail()
 
         fun fetchData(tv: Router.DetailTv) {
             viewModelScope.launch(coroutineDispatcher) {
-                getImageById.invoke(tv.id, PATH_IMAGE).fold(
+                getImageByIdUseCase.invoke(tv.id, PATH_IMAGE).fold(
                     onSuccess = {
                         updateState {
                             copy(image = it)
@@ -61,7 +61,7 @@ class DetailViewModel
         private fun update() {
             viewModelScope.launch(coroutineDispatcher) {
                 currentUiState.tv?.let {
-                    updateTv.invoke(tv = it.copy(isFavorite = !it.isFavorite))
+                    updateTvUseCase.invoke(tv = it.copy(isFavorite = !it.isFavorite))
                 }
             }
         }

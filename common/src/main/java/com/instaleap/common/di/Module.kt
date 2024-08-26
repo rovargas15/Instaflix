@@ -1,7 +1,7 @@
 package com.instaleap.common.di
 
 import com.instaleap.domain.repository.ImageRepository
-import com.instaleap.domain.usecase.GetImageById
+import com.instaleap.domain.usecase.GetImageByIdUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,5 +13,5 @@ import dagger.hilt.android.scopes.ViewModelScoped
 object Module {
     @Provides
     @ViewModelScoped
-    fun getImageByIdProvider(repository: ImageRepository) = GetImageById(repository)
+    fun getImageByIdProvider(repository: ImageRepository) = GetImageByIdUseCase(repository)
 }

@@ -112,7 +112,7 @@ private fun ContentMovieDetail(
 ) {
     val movie = uiState.movie ?: return
     if (uiState.isShowDialog) {
-        ShowDialog(onUiEvent)
+        ShowDialog(movie, onUiEvent)
     }
 
     Column(
@@ -283,7 +283,10 @@ private fun ContentInfoMovie(
 }
 
 @Composable
-private fun ShowDialog(onUiEvent: (UiEventDetail) -> Unit) {
+private fun ShowDialog(
+    movie: Movie,
+    onUiEvent: (UiEventDetail) -> Unit,
+) {
     ConfirmRemoveFavoriteDialog(
         type = stringResource(id = com.instaleap.appkit.R.string.movie),
         onDismissRequest = {
@@ -293,7 +296,7 @@ private fun ShowDialog(onUiEvent: (UiEventDetail) -> Unit) {
             onUiEvent(UiEventDetail.DismissDialog)
         },
         onConfirm = {
-            onUiEvent(UiEventDetail.RemoveFavorite)
+            onUiEvent(UiEventDetail.RemoveFavorite(movie))
         },
     )
 }

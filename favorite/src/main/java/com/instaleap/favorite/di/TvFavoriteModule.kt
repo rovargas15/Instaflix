@@ -2,8 +2,8 @@ package com.instaleap.favorite.di
 
 import com.instaleap.domain.repository.MovieRepository
 import com.instaleap.domain.repository.TvRepository
-import com.instaleap.domain.usecase.GetFavoriteMovie
-import com.instaleap.domain.usecase.GetFavoriteTv
+import com.instaleap.domain.usecase.GetFavoriteMovieUseCase
+import com.instaleap.domain.usecase.GetFavoriteTvUseCase
 import com.instaleap.favorite.ui.favorite.FavoriteViewModel
 import dagger.Module
 import dagger.Provides
@@ -17,21 +17,21 @@ import kotlinx.coroutines.CoroutineDispatcher
 object TvFavoriteModule {
     @Provides
     @ViewModelScoped
-    fun getFavoriteMovieProvider(repository: MovieRepository) = GetFavoriteMovie(repository = repository)
+    fun getFavoriteMovieProvider(repository: MovieRepository) = GetFavoriteMovieUseCase(repository = repository)
 
     @Provides
     @ViewModelScoped
-    fun getFavoriteTvProvider(repository: TvRepository) = GetFavoriteTv(repository = repository)
+    fun getFavoriteTvProvider(repository: TvRepository) = GetFavoriteTvUseCase(repository = repository)
 
     @Provides
     @ViewModelScoped
     fun favoriteViewModelProvider(
-        getFavoriteMovie: GetFavoriteMovie,
-        getFavoriteTv: GetFavoriteTv,
+        getFavoriteMovieUseCase: GetFavoriteMovieUseCase,
+        getFavoriteTvUseCase: GetFavoriteTvUseCase,
         coroutineDispatcher: CoroutineDispatcher,
     ) = FavoriteViewModel(
-        getFavoriteMovie = getFavoriteMovie,
-        getFavoriteTv = getFavoriteTv,
+        getFavoriteMovieUseCase = getFavoriteMovieUseCase,
+        getFavoriteTvUseCase = getFavoriteTvUseCase,
         coroutineDispatcher = coroutineDispatcher,
     )
 }
