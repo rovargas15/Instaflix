@@ -37,7 +37,6 @@ android {
             '**/*$Parcelable*.*',
             '**/*_Factory*.*',
             '**/*_Provide*Factory*.*',
-
             '**/di/**/*.*',
 
             // Module core
@@ -54,8 +53,6 @@ android {
             // Module domain
             '**/domain/exception/*',
             '**/domain/model/*',
-
-
     ]
 
     def debugTree = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes", excludes: fileFilter)

@@ -2,8 +2,6 @@ package com.instaleap.favorite.ui.favorite
 
 import androidx.lifecycle.viewModelScope
 import com.instaleap.core.MviViewModel
-import com.instaleap.domain.model.Movie
-import com.instaleap.domain.model.Tv
 import com.instaleap.domain.usecase.GetFavoriteMovieUseCase
 import com.instaleap.domain.usecase.GetFavoriteTvUseCase
 import com.instaleap.favorite.ui.favorite.FavoriteContract.Effect
@@ -32,18 +30,16 @@ class FavoriteViewModel
                 getFavoriteMovieUseCase
                     .invoke()
                     .combine(getFavoriteTvUseCase.invoke()) { movie, tv ->
-                        mapOf(1 to movie, 2 to tv)
+                        FavoriteContent(movie, tv)
                     }.collect {
                         updateState {
                             copy(
-                                listMovies = it.getValue(1) as List<Movie>,
-                                listTvs = it.getValue(2) as List<Tv>,
+                                listMovies = it.movies,
+                                listTvs = it.tvs,
+                                isLoading = false,
                             )
                         }
                     }
-            }
-            updateState {
-                copy(isLoading = false)
             }
         }
 

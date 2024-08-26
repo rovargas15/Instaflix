@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalSharedTransitionApi::class)
-
 package com.instaleap.presentation.nav
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -44,7 +42,7 @@ fun NavigatorApp(navController: NavHostController = rememberNavController()) {
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-fun NavGraphBuilder.movie(
+private fun NavGraphBuilder.movie(
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
 ) {
@@ -70,7 +68,8 @@ fun NavGraphBuilder.movie(
     }
 }
 
-fun NavGraphBuilder.tv(
+@OptIn(ExperimentalSharedTransitionApi::class)
+private fun NavGraphBuilder.tv(
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
 ) {
@@ -94,6 +93,7 @@ fun NavGraphBuilder.tv(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.favorite(
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
