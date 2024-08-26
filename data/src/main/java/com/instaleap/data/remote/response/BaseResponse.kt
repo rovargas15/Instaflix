@@ -3,7 +3,6 @@ package com.instaleap.data.remote.response
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class BaseResponse<R>(
     val page: Int,

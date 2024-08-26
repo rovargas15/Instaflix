@@ -95,7 +95,7 @@ class TvRepositoryImplTest {
         coEvery { dataSourceRemote.getTvByCategory("cat", 1) } returns response
 
         runBlocking {
-            tvRepositoryImpl.getTvByCategory("cat",1).apply {
+            tvRepositoryImpl.getTvByCategory("cat", 1).apply {
                 assert(isSuccess)
             }
         }
@@ -110,7 +110,7 @@ class TvRepositoryImplTest {
         coEvery { dataSourceRemote.getTvByCategory("cat", 1) } throws Exception("Error")
 
         runBlocking {
-            val result = tvRepositoryImpl.getTvByCategory("cat",1)
+            val result = tvRepositoryImpl.getTvByCategory("cat", 1)
             assert(result.isFailure)
             assert(result.exceptionOrNull() is DomainException)
         }

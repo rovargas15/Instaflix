@@ -6,7 +6,6 @@ import com.instaleap.data.util.Constant
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
-import io.ktor.http.HttpStatusCode
 import javax.inject.Inject
 
 class ImageDataSource
@@ -20,10 +19,6 @@ class ImageDataSource
         ): ImageResponse {
             val url = Constant.Api.IMAGE_URL.format(patch, id)
             val response = client.get(url)
-            if (response.status == HttpStatusCode.OK) {
-                return response.body<ImageResponse>()
-            } else {
-                throw Throwable(response.status.description)
-            }
+            return response.body<ImageResponse>()
         }
     }

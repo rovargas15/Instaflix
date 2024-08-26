@@ -1,4 +1,5 @@
 apply plugin: 'jacoco'
+apply plugin: "io.gitlab.arturbosch.detekt"
 
 jacoco {
     toolVersion = "0.8.12"
@@ -20,39 +21,40 @@ android {
     }
 
     // Definir filtros de archivo en una variable para facilitar el mantenimiento
-    def fileFilter = [
-            '**/*$ViewInjector*.*',
-            '**/*$ViewBinder*.*',
-            '**/*_ViewBinding*.*',
-            '**/*DefaultImpls*.*',
-            '**/R.class',
-            '**/R$*.class',
-            '**/BuildConfig.*',
-            '**/Manifest*.*',
-            'android/**/*.*',
-            '**/R2*.*',
-            '**/R2$*.*',
-            '**/*_MembersInjector.*',
-            '**/*Parcelable.*',
-            '**/*$Parcelable*.*',
-            '**/*_Factory*.*',
-            '**/*_Provide*Factory*.*',
-            '**/di/**/*.*',
+    def fileFilter = ['**/*$ViewInjector*.*',
+                      '**/*$ViewBinder*.*',
+                      '**/*_ViewBinding*.*',
+                      '**/*DefaultImpls*.*',
+                      '**/R.class',
+                      '**/R$*.class',
+                      '**/BuildConfig.*',
+                      '**/Manifest*.*',
+                      'android/**/*.*',
+                      '**/R2*.*',
+                      '**/R2$*.*',
+                      '**/*_MembersInjector.*',
+                      '**/*Parcelable.*',
+                      '**/*$Parcelable*.*',
+                      '**/*_Factory*.*',
+                      '**/*_Provide*Factory*.*',
+                      '**/di/**/*.*',
 
-            // Module core
-            '**/core/route/*',
-            '**/core/CollectEffects*.*',
+                      // Module core
+                      '**/core/route/*',
+                      '**/core/CollectEffects*.*',
 
-            // Module data
-            '**/data/local/**/*.*',
-            '**/data/util/*',
-            '**/data/remote/client/*',
-            '**/data/remote/response/*',
-            '**/Response*.*',
+                      // Module data
+                      '**/data/local/**/*.*',
+                      '**/data/util/*',
+                      '**/data/remote/client/*',
+                      '**/data/remote/response/*',
+                      '**/Response*.*',
 
-            // Module domain
-            '**/domain/exception/*',
-            '**/domain/model/*',
+                      // Module domain
+                      '**/domain/exception/*',
+                      '**/domain/model/*',
+
+                      '**/*Screen*.*',
     ]
 
     def debugTree = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes", excludes: fileFilter)
@@ -104,4 +106,18 @@ android {
         executable 'sh'
         args '-c', "open '${reportDir}'"
     }
+
+
+    detekt {
+        // Configura Detekt de manera consistente en todos los subproyectos
+        toolVersion = libs.versions.deteck.get()
+        config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+        reports {
+            html.required.set(true)
+            xml.required.set(true)
+            txt.required.set(false)
+        }
+        setSource(files("src/main/kotlin"))
+    }
 }
+
