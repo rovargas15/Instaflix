@@ -3,94 +3,90 @@ name: Android CI Pipeline
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 jobs:
-  build:
+  test-and-build:
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        module: [ core, data, domain, favorite, movie, tv ]
+        api-level: [ 30 ]
+        target: [ android-30 ]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          submodules: true  # Incluye submódulos en la descarga si es necesario
 
-      - name: Set up JDK
+      - name: Set Up JDK 11
         uses: actions/setup-java@v3
         with:
+          distribution: 'zulu'
           java-version: '11'
 
       - name: Cache Gradle Dependencies
         uses: actions/cache@v3
         with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ${{ matrix.module }}/build/
+          key: gradle-${{ runner.os }}-${{ matrix.module }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            gradle-${{ runner.os }}-${{ matrix.module }}-
 
-      - name: Build and Test
-        env:
-          API_KEY: ${{ secrets.API_KEY }}
-        run: |
-          SECRET_FILE="secrets.properties"
-          APK_DIR="app/build/outputs/apk/debug/"
-          APK_NAME="app-debug-$(date +%Y%m%d%H%M%S).apk"
-          APK_PATH="$APK_DIR$APK_NAME"
-
-          # Crear archivo de secretos si no existe
-          if [ ! -f "$SECRET_FILE" ]; then
-            echo "API_KEY=$API_KEY" > $SECRET_FILE
-          fi
-
-          # Ejecutar lint, análisis estático, pruebas, informes de cobertura
-          for module in core data domain movie tv favorite; do
-            echo "🔍 Analizando módulo: $module"
-
-            echo "📋 Ejecutando lint en $module..."
-            ./gradlew :"$module":lint || exit 1
-
-            echo "🔎 Ejecutando análisis estático (Detekt) en $module..."
-            ./gradlew :"$module":detekt || exit 1
-
-            echo "🧪 Ejecutando pruebas unitarias en $module..."
-            ./gradlew :"$module":testDebugUnitTest -PsecretFile=$SECRET_FILE || exit 1
-
-            echo "📈 Generando informe de cobertura en $module..."
-            ./gradlew :"$module":jacocoTestReport -PsecretFile=$SECRET_FILE || exit 1
-
-            echo "✅ Verificando cobertura de código en $module..."
-            ./gradlew :"$module":jacocoTestCoverageVerification -PsecretFile=$SECRET_FILE || exit 1
-
-            echo "🧹 Limpiando informes de cobertura de JaCoCo para $module..."
-            rm -rf "$module"/build/reports/jacoco/
-          done
-
-          # Compilar y generar la APK del módulo principal
-          echo "🔨 Compilando y generando la APK del proyecto..."
-          ./gradlew :app:assembleDebug -PsecretFile=$SECRET_FILE || exit 1
-
-          # Renombrar la APK generada
-          if [ -f "$APK_DIR/app-debug.apk" ]; then
-            mv "$APK_DIR/app-debug.apk" "$APK_PATH"
-            echo "✅ APK generada y renombrada a: $APK_NAME"
-          else
-            echo "❌ No se encontró la APK generada. Revisa el proceso de compilación."
-            exit 1
-          fi
-
-          # Limpiar el archivo de secretos si no existía antes
-          if [ ! -f "$SECRET_FILE" ]; then
-            rm $SECRET_FILE
-            echo "🧹 Archivo de secretos ($SECRET_FILE) eliminado."
-          fi
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v3
+      - name: Set Up Android SDK
+        uses: android-actions/setup-android@v2
         with:
-          name: app-debug
-          path: $APK_PATH
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          components: build-tools-30.0.2
 
-      - name: Cleanup
+      - name: Create Secrets Properties File
         run: |
-          echo "🎉 Validación CI completada exitosamente."
+          echo "Creating secrets.properties file..."
+          echo "API_KEY=${{ secrets.API_KEY }}" > $GITHUB_WORKSPACE/secrets.properties
+
+      - name: Lint Code for Module
+        run: |
+          echo "Running lint for module: ${{ matrix.module }}..."
+          ./gradlew :${{ matrix.module }}:lint
+
+      - name: Static Code Analysis (Detekt)
+        run: |
+          echo "Running Detekt static code analysis for module: ${{ matrix.module }}..."
+          ./gradlew :${{ matrix.module }}:detekt
+
+      - name: Run Unit Tests for Module
+        run: |
+          echo "Running unit tests for module: ${{ matrix.module }}..."
+          ./gradlew :${{ matrix.module }}:testDebugUnitTest -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
+
+      - name: Generate JaCoCo Coverage Report
+        run: |
+          echo "Generating JaCoCo coverage report for module: ${{ matrix.module }}..."
+          ./gradlew :${{ matrix.module }}:jacocoTestReport -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
+
+      - name: Verify JaCoCo Coverage
+        run: |
+          echo "Checking JaCoCo coverage thresholds for module: ${{ matrix.module }}..."
+          ./gradlew :${{ matrix.module }}:jacocoTestCoverageVerification -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
+
+      - name: Clean Up JaCoCo Reports
+        run: |
+          echo "Deleting JaCoCo reports for module: ${{ matrix.module }}..."
+          rm -rf ${{ matrix.module }}/build/reports/jacoco/
+
+      - name: Build APK
+        run: |
+          echo "Building APK for app module..."
+          ./gradlew :app:assembleDebug -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
+
+      - name: Find APK Path
+        run: |
+          APK_PATH=$(find app/build/outputs/apk/debug/ -name "*.apk")
+          echo "APK generated at: $APK_PATH"
