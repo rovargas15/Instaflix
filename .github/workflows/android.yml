@@ -31,6 +31,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Create secrets.properties
+        run: echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
+
+      - name: Insert API_KEY from GitHub Secrets
+        run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
+
       - name: Build with Gradle
         run: ./gradlew clean build
 
