@@ -5,11 +5,11 @@ import com.instaleap.domain.repository.MovieRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlin.test.Test
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class GetFavoriteMovieTest {
     private val repository: MovieRepository = mockk()
