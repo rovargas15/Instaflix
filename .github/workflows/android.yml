@@ -7,13 +7,8 @@ on:
     branches: [ "master" ]
 
 jobs:
-  test-and-build:
+  setup:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: [ core, data, domain, favorite, movie, tv ]
-        api-level: [ 30 ]
-        target: [ android-30 ]
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -26,17 +21,6 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Cache Gradle Dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            ${{ matrix.module }}/build/
-          key: gradle-${{ runner.os }}-${{ matrix.module }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-${{ matrix.module }}-
-
       - name: Set Up Android SDK
         uses: android-actions/setup-android@v2
         with:
@@ -44,26 +28,49 @@ jobs:
           target: ${{ matrix.target }}
           components: build-tools-30.0.2
 
-      - name: Create Secrets Properties File
-        run: |
-          echo "Creating secrets.properties file..."
-          echo "API_KEY=${{ secrets.API_KEY }}" > $GITHUB_WORKSPACE/secrets.properties
-
+  lint:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [ core, data, domain, favorite, movie, tv ]
+    steps:
       - name: Lint Code for Module
         run: |
           echo "Running lint for module: ${{ matrix.module }}..."
           ./gradlew :${{ matrix.module }}:lint
 
+  detekt:
+    needs: lint
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [ core, data, domain, favorite, movie, tv ]
+    steps:
       - name: Static Code Analysis (Detekt)
         run: |
           echo "Running Detekt static code analysis for module: ${{ matrix.module }}..."
           ./gradlew :${{ matrix.module }}:detekt
 
+  test:
+    needs: detekt
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [ core, data, domain, favorite, movie, tv ]
+    steps:
       - name: Run Unit Tests for Module
         run: |
           echo "Running unit tests for module: ${{ matrix.module }}..."
           ./gradlew :${{ matrix.module }}:testDebugUnitTest -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
 
+  coverage:
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [ core, data, domain, favorite, movie, tv ]
+    steps:
       - name: Generate JaCoCo Coverage Report
         run: |
           echo "Generating JaCoCo coverage report for module: ${{ matrix.module }}..."
@@ -79,6 +86,10 @@ jobs:
           echo "Deleting JaCoCo reports for module: ${{ matrix.module }}..."
           rm -rf ${{ matrix.module }}/build/reports/jacoco/
 
+  build:
+    needs: coverage
+    runs-on: ubuntu-latest
+    steps:
       - name: Build APK
         run: |
           echo "Building APK for app module..."
