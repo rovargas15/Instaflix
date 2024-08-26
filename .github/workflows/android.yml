@@ -1,0 +1,74 @@
+name: Android CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [core, data, domain, favorite, movie, tv]
+        api-level: [30]
+        target: [android-30]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ${{ matrix.module }}/build/
+          key: ${{ runner.os }}-gradle-${{ matrix.module }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-${{ matrix.module }}-
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          components: build-tools-30.0.2
+
+      - name: Create secrets.properties
+        run: echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
+
+      - name: Insert API_KEY from GitHub Secrets
+        run: sed -i "s/placeholder/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
+
+      - name: Lint Module Code
+        run: ./gradlew :${{ matrix.module }}:lint
+
+      - name: Static Code Analysis
+        run: ./gradlew :${{ matrix.module }}:detekt
+
+      - name: Build APK
+        run: ./gradlew :app:assembleDebug -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
+
+      - name: Run Unit Tests for Module
+        run: ./gradlew :${{ matrix.module }}:testDebugUnitTest -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
+
+      - name: Generate JaCoCo Coverage Report for Module
+        run: ./gradlew :${{ matrix.module }}:jacocoTestReport -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
+
+      - name: Check Coverage Threshold for Module
+        run: ./gradlew :${{ matrix.module }}:jacocoTestCoverageVerification -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
+
+      - name: Delete JaCoCo Report for Module
+        run: rm -rf ${{ matrix.module }}/build/reports/jacoco/
+
+      - name: Get Short Commit Hash
+        id: vars
+        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
