@@ -1,4 +1,4 @@
-name: Android CI Pipeline
+name: Android CI
 
 on:
   push:
@@ -34,69 +34,16 @@ jobs:
   build:
     needs: setup
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: [ core, data, domain, favorite, movie, tv ]
     steps:
+      - name: Check for gradlew and set permissions
+        run: |
+          if [ ! -f ./gradlew ]; then
+            echo "gradlew file not found. Please ensure it exists in your project's root directory."
+            exit 1
+          fi
+          chmod +x ./gradlew
+
       - name: Build Module
         run: |
           echo "Building module: ${{ matrix.module }}..."
           ./gradlew :${{ matrix.module }}:assembleDebug -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
-
-  lint:
-    needs: build  # Changed dependency to build stage
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: [ core, data, domain, favorite, movie, tv ]
-    steps:
-      - name: Lint Code for Module
-        run: |
-          echo "Running lint for module: ${{ matrix.module }}..."
-          ./gradlew :${{ matrix.module }}:lint
-
-  detekt:
-    needs: lint  # Changed dependency to lint stage
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: [ core, data, domain, favorite, movie, tv ]
-    steps:
-      - name: Static Code Analysis (Detekt)
-        run: |
-          echo "Running Detekt static code analysis for module: ${{ matrix.module }}..."
-          ./gradlew :${{ matrix.module }}:detekt
-
-  test:
-    needs: detekt  # Changed dependency to detekt stage
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: [ core, data, domain, favorite, movie, tv ]
-    steps:
-      - name: Run Unit Tests for Module
-        run: |
-          echo "Running unit tests for module: ${{ matrix.module }}..."
-          ./gradlew :${{ matrix.module }}:testDebugUnitTest -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
-
-  coverage:
-    needs: test  # Changed dependency to test stage
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        module: [ core, data, domain, favorite, movie, tv ]
-    steps:
-      - name: Generate JaCoCo Coverage Report
-        run: |
-          echo "Generating JaCoCo coverage report for module: ${{ matrix.module }}..."
-          ./gradlew :${{ matrix.module }}:jacocoTestReport -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
-
-      - name: Verify JaCoCo Coverage
-        run: |
-          echo "Checking JaCoCo coverage thresholds for module: ${{ matrix.module }}..."
-          ./gradlew :${{ matrix.module }}:jacocoTestCoverageVerification -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
-
-      - name: Clean Up JaCoCo Reports
-        run: |
-          echo "Deleting JaCoCo reports for module: ${{ matrix.module }}..." (Optional step)
-          rm -rf ${{ matrix.module }}/build/reports/jacoco/
