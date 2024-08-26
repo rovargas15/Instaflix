@@ -95,7 +95,7 @@ class MovieRepositoryImplTest {
         coEvery { dataSourceRemote.getMovies("cat", 1) } returns response
 
         runBlocking {
-            movieRepositoryImpl.getMovies("cat").apply {
+            movieRepositoryImpl.getMovies("cat",1 ).apply {
                 assert(isSuccess)
             }
         }
@@ -110,7 +110,7 @@ class MovieRepositoryImplTest {
         coEvery { dataSourceRemote.getMovies("cat", 1) } throws Exception("Error")
 
         runBlocking {
-            val result = movieRepositoryImpl.getMovies("cat")
+            val result = movieRepositoryImpl.getMovies("cat", 1)
             assert(result.isFailure)
             assert(result.exceptionOrNull() is DomainException)
         }
@@ -213,28 +213,6 @@ class MovieRepositoryImplTest {
         coVerify {
             db.movieDao().updateMovie(true, 1)
         }
-    }
-
-    @Test
-    fun `Give success When getPaginatedMovies Then return result Movie`() {
-        val response =
-            BaseResponse(
-                page = 1,
-                results = listOf(movieResponse),
-                totalPages = 1,
-                totalResults = 1,
-            )
-
-        coEvery { dataSourceRemote.getMovies("cat", 1) } returns response
-        validateSaveMovie(category = "cat", response = response)
-
-        runBlocking {
-            movieRepositoryImpl.getPaginatedMovies("cat", 1).apply {
-                assert(isSuccess)
-            }
-        }
-
-        coVerify { dataSourceRemote.getMovies("cat", 1) }
     }
 
     @Test

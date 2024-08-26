@@ -21,7 +21,7 @@ class TvRepositoryImpl
         private val db: InstaflixDatabase,
     ) : BaseRepository(),
         TvRepository {
-        override suspend fun getTvByCategory(category: String): Result<DataBase<Tv>> =
+        override suspend fun getTvByCategory(category: String, page: Int): Result<DataBase<Tv>> =
             launchResultSafe {
                 saveTv(dataSourceRemote.getTvByCategory(category), category)
             }
@@ -51,14 +51,6 @@ class TvRepositoryImpl
         override suspend fun updateTv(tv: Tv) {
             db.tvDao().updateTv(tv.isFavorite, tv.id)
         }
-
-        override suspend fun getPaginatedTv(
-            category: String,
-            page: Int,
-        ): Result<DataBase<Tv>> =
-            launchResultSafe {
-                saveTv(dataSourceRemote.getTvByCategory(category, page), category)
-            }
 
         @VisibleForTesting
         internal suspend fun saveTv(

@@ -8,23 +8,25 @@ import io.mockk.mockk
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class GetTvByIdTest {
+class GetFavoriteTvTest {
     private val repository: TvRepository = mockk()
-    private val getTvById = GetTvById(repository)
+    private val getAllTv = GetAllTv(repository)
 
     @Test
     fun `Give success When invoke Then return tv list`() =
         runBlocking {
             // Given
-            coEvery { repository.getTvById(1) } returns flowOf(mockk())
+            val tvList = listOf<Tv>(mockk())
+            coEvery { repository.getTvByCategoryCache() } returns flowOf(tvList)
 
             // When
-            val result = getTvById.invoke(1)
+            val result = getAllTv.invoke()
 
             // Then
-            assert(result.firstOrNull() is Tv)
-            coVerify { repository.getTvById(1) }
+            assertEquals(tvList, result.firstOrNull())
+            coVerify { repository.getTvByCategoryCache() }
         }
 }

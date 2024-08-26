@@ -21,7 +21,7 @@ class MovieRepositoryImpl
         private val db: InstaflixDatabase,
     ) : BaseRepository(),
         MovieRepository {
-        override suspend fun getMovies(category: String): Result<DataBase<Movie>> =
+        override suspend fun getMovies(category: String, page: Int): Result<DataBase<Movie>> =
             launchResultSafe {
                 saveMovies(dataSourceRemote.getMovies(category), category)
             }
@@ -47,14 +47,6 @@ class MovieRepositoryImpl
         override suspend fun updateMovie(movie: Movie) {
             db.movieDao().updateMovie(movie.isFavorite, movie.id)
         }
-
-        override suspend fun getPaginatedMovies(
-            category: String,
-            page: Int,
-        ): Result<DataBase<Movie>> =
-            launchResultSafe {
-                saveMovies(dataSourceRemote.getMovies(category, page), category)
-            }
 
         override suspend fun getAllCache() =
             db.movieDao().getAll().map { resultsChange ->

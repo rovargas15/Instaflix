@@ -6,7 +6,10 @@ import com.instaleap.domain.model.TvDetail
 import kotlinx.coroutines.flow.Flow
 
 interface TvRepository {
-    suspend fun getTvByCategory(category: String): Result<DataBase<Tv>>
+    suspend fun getTvByCategory(
+        category: String,
+        page: Int ,
+    ): Result<DataBase<Tv>>
 
     suspend fun getTvByCategoryCache(): Flow<List<Tv>>
 
@@ -19,9 +22,4 @@ interface TvRepository {
     suspend fun getFavoriteTv(): Flow<List<Tv>>
 
     suspend fun updateTv(tv: Tv)
-
-    suspend fun getPaginatedTv(
-        category: String,
-        page: Int,
-    ): Result<DataBase<Tv>>
 }

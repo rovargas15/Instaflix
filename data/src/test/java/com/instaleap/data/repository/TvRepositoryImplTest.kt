@@ -83,7 +83,7 @@ class TvRepositoryImplTest {
     }
 
     @Test
-    fun `Give success When getTvs Then return result Tv`() {
+    fun `Give category and page When getTvs Then return result Tv`() {
         val response =
             BaseResponse(
                 page = 1,
@@ -95,7 +95,7 @@ class TvRepositoryImplTest {
         coEvery { dataSourceRemote.getTvByCategory("cat", 1) } returns response
 
         runBlocking {
-            tvRepositoryImpl.getTvByCategory("cat").apply {
+            tvRepositoryImpl.getTvByCategory("cat",1).apply {
                 assert(isSuccess)
             }
         }
@@ -110,7 +110,7 @@ class TvRepositoryImplTest {
         coEvery { dataSourceRemote.getTvByCategory("cat", 1) } throws Exception("Error")
 
         runBlocking {
-            val result = tvRepositoryImpl.getTvByCategory("cat")
+            val result = tvRepositoryImpl.getTvByCategory("cat",1)
             assert(result.isFailure)
             assert(result.exceptionOrNull() is DomainException)
         }
@@ -213,28 +213,6 @@ class TvRepositoryImplTest {
         coVerify {
             db.tvDao().updateTv(true, 1)
         }
-    }
-
-    @Test
-    fun `Give success When getPaginatedTvs Then return result Tv`() {
-        val response =
-            BaseResponse(
-                page = 1,
-                results = listOf(tvResponse),
-                totalPages = 1,
-                totalResults = 1,
-            )
-
-        coEvery { dataSourceRemote.getTvByCategory("cat", 1) } returns response
-        validateSaveTv(category = "cat", response = response)
-
-        runBlocking {
-            tvRepositoryImpl.getPaginatedTv("cat", 1).apply {
-                assert(isSuccess)
-            }
-        }
-
-        coVerify { dataSourceRemote.getTvByCategory("cat", 1) }
     }
 
     @Test
