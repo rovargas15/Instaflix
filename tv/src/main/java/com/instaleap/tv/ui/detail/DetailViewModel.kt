@@ -1,8 +1,10 @@
 package com.instaleap.tv.ui.detail
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.viewModelScope
 import com.instaleap.core.MviViewModel
 import com.instaleap.core.route.Router
+import com.instaleap.domain.model.Tv
 import com.instaleap.domain.usecase.GetImageByIdUseCase
 import com.instaleap.domain.usecase.GetTvByIdUseCase
 import com.instaleap.domain.usecase.GetTvDetailByIdUseCase
@@ -27,30 +29,51 @@ class DetailViewModel
         override fun initialState() = DetailContract.UiStateDetail()
 
         fun fetchData(tv: Router.DetailTv) {
+            fetchImage(tv.id)
+            fetchDetail(tv.id)
+            fetchTv(tv.id)
+        }
+
+        @VisibleForTesting
+        internal fun fetchImage(tvId: Int) {
             viewModelScope.launch(coroutineDispatcher) {
-                getImageByIdUseCase.invoke(tv.id, PATH_IMAGE).fold(
+                getImageByIdUseCase.invoke(tvId, PATH_IMAGE).fold(
                     onSuccess = {
                         updateState {
                             copy(image = it)
                         }
                     },
                     onFailure = {
+                        updateState {
+                            copy(isError = true)
+                        }
                     },
                 )
             }
+        }
+
+        @VisibleForTesting
+        internal fun fetchDetail(tvId: Int) {
             viewModelScope.launch(coroutineDispatcher) {
-                getDetailUseCase.invoke(tv.id).fold(
+                getDetailUseCase.invoke(tvId).fold(
                     onSuccess = {
                         updateState {
                             copy(tvDetail = it)
                         }
                     },
                     onFailure = {
+                        updateState {
+                            copy(isError = true)
+                        }
                     },
                 )
             }
+        }
+
+        @VisibleForTesting
+        internal fun fetchTv(tvId: Int) {
             viewModelScope.launch(coroutineDispatcher) {
-                getMovieById.invoke(tv.id).collect {
+                getMovieById.invoke(tvId).collect {
                     updateState {
                         copy(tv = it)
                     }
@@ -58,11 +81,10 @@ class DetailViewModel
             }
         }
 
-        private fun update() {
+        @VisibleForTesting
+        internal fun update(tv: Tv) {
             viewModelScope.launch(coroutineDispatcher) {
-                currentUiState.tv?.let {
-                    updateTvUseCase.invoke(tv = it.copy(isFavorite = !it.isFavorite))
-                }
+                updateTvUseCase.invoke(tv = tv.copy(isFavorite = !tv.isFavorite))
             }
         }
 
@@ -74,7 +96,7 @@ class DetailViewModel
                             copy(isShowDialog = true)
                         }
                     } else {
-                        update()
+                        update(uiEvent.tv)
                     }
                 }
 
@@ -82,14 +104,14 @@ class DetailViewModel
                     sendEffect(EffectDetail.NavigateToBack)
                 }
 
-                UiEventDetail.DismissDialog -> {
+                is UiEventDetail.DismissDialog -> {
                     updateState {
                         copy(isShowDialog = false)
                     }
                 }
 
-                UiEventDetail.RemoveFavorite -> {
-                    update()
+                is UiEventDetail.RemoveFavorite -> {
+                    update(uiEvent.tv)
                     updateState {
                         copy(isShowDialog = false)
                     }
@@ -98,4 +120,5 @@ class DetailViewModel
         }
     }
 
-private const val PATH_IMAGE = "tv"
+@VisibleForTesting
+internal const val PATH_IMAGE = "tv"
