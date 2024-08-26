@@ -40,6 +40,10 @@ android {
 
             '**/di/**/*.*',
 
+            // Module core
+            '**/core/route/*',
+            '**/core/CollectEffects*.*',
+
             // Module data
             '**/data/local/**/*.*',
             '**/data/util/*',
@@ -50,6 +54,8 @@ android {
             // Module domain
             '**/domain/exception/*',
             '**/domain/model/*',
+
+
     ]
 
     def debugTree = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes", excludes: fileFilter)

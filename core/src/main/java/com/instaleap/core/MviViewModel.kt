@@ -1,5 +1,6 @@
 package com.instaleap.core
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.Channel
@@ -19,12 +20,14 @@ abstract class MviViewModel<UiState, UiEvent, Effect> : ViewModel() {
 
     protected val currentUiState: UiState get() = uiState.value
 
-    protected fun updateState(reducer: UiState.() -> UiState) {
+    @VisibleForTesting
+    internal fun updateState(reducer: UiState.() -> UiState) {
         val newState = uiState.value.reducer()
         mutableUiState.value = newState
     }
 
-    protected fun sendEffect(effect: Effect) {
+    @VisibleForTesting
+    internal fun sendEffect(effect: Effect) {
         viewModelScope.launch {
             channelEffects.send(effect)
         }

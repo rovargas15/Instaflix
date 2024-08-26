@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+apply(from = "../jacoco.gradle")
+
 android {
     namespace = "com.instaleap.core"
     compileSdk =
@@ -51,4 +53,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.lifecycle.viewmodel.android)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.coroutines.test)
 }
