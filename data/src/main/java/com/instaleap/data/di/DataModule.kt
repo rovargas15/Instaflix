@@ -13,15 +13,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
-import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
-
     @Singleton
     @Provides
     fun provideHttpClient(): HttpClient = client
@@ -31,13 +29,16 @@ object DataModule {
 
     @Singleton
     @Provides
-    fun createDatabaseProvide(@ApplicationContext context: Context): InstaflixDatabase {
+    fun createDatabaseProvide(
+        @ApplicationContext context: Context,
+    ): InstaflixDatabase {
         val dbFile = context.getDatabasePath(DB_FILE_NAME)
-        return Room.databaseBuilder(
-            context = context,
-            name = dbFile.absolutePath,
-            klass = InstaflixDatabase::class.java
-        ).build()
+        return Room
+            .databaseBuilder(
+                context = context,
+                name = dbFile.absolutePath,
+                klass = InstaflixDatabase::class.java,
+            ).build()
     }
 
     @Provides

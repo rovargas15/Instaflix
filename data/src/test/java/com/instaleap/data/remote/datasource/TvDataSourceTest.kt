@@ -9,11 +9,11 @@ import com.instaleap.data.responseMockk
 import com.instaleap.data.util.Constant
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.http.fullPath
+import kotlin.test.Test
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
-import kotlin.test.Test
 
 class TvDataSourceTest {
     private lateinit var movieDataSource: TvDataSource
@@ -27,7 +27,7 @@ class TvDataSourceTest {
         clienteMockk(
             MockEngine.invoke {
                 when (it.url.fullPath) {
-                    "/tv/1?language=es" -> {
+                    Constant.Api.TV_BY_ID.format(1) -> {
                         responseMockk(
                             content = jsonResponseById,
                         )
