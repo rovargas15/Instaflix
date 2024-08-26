@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configurar variables necesarias
-API_KEY="eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwZjZjMDZiMWRmNzI2NjdjZmQ2NmUwYjFiMjEwOGMzNyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.Mgl029qctpvQN8AQJWZhhYaiWrSQunMfa6u1IdUj5Do"  # Reemplaza con tu API key local
+API_KEY="API_KEY"  # Reemplaza con tu API key local
 MODULES=("core" "data" "domain" "movie" "tv" "favorite")
 GRADLE_CMD="./gradlew"
 SECRET_FILE="secrets.properties"
