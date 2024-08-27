@@ -31,9 +31,6 @@ jobs:
       - name: Insert API_KEY from GitHub Secrets
         run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
 
-      - name: Build with Gradle
-        run: ./gradlew build
-
       - name: Run unit tests
         run: |
           echo "Running unit tests..."
