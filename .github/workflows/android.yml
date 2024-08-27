@@ -22,13 +22,11 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
+      - name: Cache Gradle dependencies
+        uses: actions/download-artifact@v3
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          artifact: gradle-cache
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
