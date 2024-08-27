@@ -41,7 +41,7 @@ jobs:
 
   analysis-test:
     needs: [ build ]
-    name: SonarCloud
+    name: Analysis y Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -80,9 +80,10 @@ jobs:
           ./gradlew detekt || exit 1
 
 
-  covergae:
-    needs: [ build ]
-    name: SonarCloud
+
+  coverage:
+    needs: [ analysis-test ]
+    name: Coverage jacoco
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -103,8 +104,9 @@ jobs:
 
 
 
+
   build-and-deploy:
-    needs: [ sonar ]
+    needs: [ coverage ]
     runs-on: ubuntu-latest
 
     steps:
