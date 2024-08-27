@@ -99,12 +99,8 @@ jobs:
 
       - name: Generate JaCoCo Coverage Report
         run: |
-          echo "📈 Generando informe de cobertura..."
-          ./gradlew :jacocoTestReport || exit 1
-
           echo "✅ Verificando cobertura de código..."
           ./gradlew jacocoTestCoverageVerification  || exit 1
-
 
   build-and-deploy:
     needs: [ coverage ]
