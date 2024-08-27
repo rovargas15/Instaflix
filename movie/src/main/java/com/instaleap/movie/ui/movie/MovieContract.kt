@@ -20,6 +20,8 @@ interface MovieContract {
         ) : UiEventMovie()
 
         data object Refresh : UiEventMovie()
+
+        data object SnackBarDismissed : UiEventMovie()
     }
 
     sealed class EffectMovie {

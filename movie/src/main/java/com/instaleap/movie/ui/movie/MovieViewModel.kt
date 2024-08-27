@@ -1,6 +1,5 @@
 package com.instaleap.movie.ui.movie
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.instaleap.core.MviViewModel
 import com.instaleap.core.route.Category
@@ -27,22 +26,24 @@ class MovieViewModel
         override fun initialState() = MovieContract.UiStateMovie()
 
         fun fetchData() {
-            viewModelScope.launch(coroutineDispatcher) {
-                updateState {
-                    copy(isLoading = true)
-                }
-                categories.forEach { category ->
-                    getMovieByCategoryUseCase.invoke(category).fold(
-                        onSuccess = {
-                            handleSuccess(category, it)
-                        },
-                        onFailure = {
-                            handleError()
-                        },
-                    )
-                }
-                updateState {
-                    copy(isLoading = false)
+            if(uiState.value.isEmpty()) {
+                viewModelScope.launch(coroutineDispatcher) {
+                    updateState {
+                        copy(isLoading = true)
+                    }
+                    categories.forEach { category ->
+                        getMovieByCategoryUseCase.invoke(category).fold(
+                            onSuccess = {
+                                handleSuccess(category, it)
+                            },
+                            onFailure = {
+                                handleError()
+                            },
+                        )
+                    }
+                    updateState {
+                        copy(isLoading = false)
+                    }
                 }
             }
         }
@@ -90,7 +91,6 @@ class MovieViewModel
                             listPopular = it.filter { it.category == Category.POPULAR },
                             listTopRated = it.filter { it.category == Category.TOP_RATED },
                             listUpcoming = it.filter { it.category == Category.UPCOMING },
-                            isError = false,
                         )
                     }
                 }
@@ -105,6 +105,12 @@ class MovieViewModel
 
                 MovieContract.UiEventMovie.Refresh -> {
                     fetchData()
+                }
+
+                MovieContract.UiEventMovie.SnackBarDismissed -> {
+                    updateState {
+                        copy(isError = false)
+                    }
                 }
             }
         }

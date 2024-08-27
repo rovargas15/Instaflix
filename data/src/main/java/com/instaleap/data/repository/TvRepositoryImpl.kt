@@ -21,7 +21,10 @@ class TvRepositoryImpl
         private val db: InstaflixDatabase,
     ) : BaseRepository(),
         TvRepository {
-        override suspend fun getTvByCategory(category: String, page: Int): Result<DataBase<Tv>> =
+        override suspend fun getTvByCategory(
+            category: String,
+            page: Int,
+        ): Result<DataBase<Tv>> =
             launchResultSafe {
                 saveTv(dataSourceRemote.getTvByCategory(category), category)
             }
@@ -62,7 +65,7 @@ class TvRepositoryImpl
             }
             return DataBase(
                 page = response.page,
-                results = response.results.map { it.toDomain() },
+                results = response.results.map { it.toDomain(category) },
                 totalPages = response.totalPages,
                 totalResults = response.totalResults,
             )
