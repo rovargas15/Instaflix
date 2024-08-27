@@ -22,12 +22,6 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Cache Gradle dependencies
-        uses: actions/download-artifact@v3
-        with:
-          path: ~/.gradle/caches
-          artifact: gradle-cache
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
