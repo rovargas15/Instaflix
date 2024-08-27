@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  build:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -23,16 +23,8 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      - name: Persist workspace
-        uses: actions/cache@v3
-        with:
-          path: ${{ github.workspace }}
-          key: ${{ runner.os }}-secrets-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-secrets- 
-
   analysis-and-test:
-    needs: [ build ]
+    needs: [ setup ]
     name: Analysis y Test
     runs-on: ubuntu-latest
     steps:
@@ -95,9 +87,8 @@ jobs:
         run: |
           echo "Creating secrets.properties file..."
           echo "API_KEY=${{ secrets.API_KEY }}" > $GITHUB_WORKSPACE/secrets.properties
-            cat $GITHUB_WORKSPACE/secrets.properties  # Verifica el contenido del archivo (opcional)
 
-      - name: Generate JaCoCo Coverage Report
+      - name: Verify JaCoCo Coverage
         run: |
           echo "✅ Verificando cobertura de código..."
           ./gradlew jacocoTestCoverageVerification  || exit 1
@@ -125,3 +116,10 @@ jobs:
           echo "Building APK for app module..."
           ./gradlew app:assembleDebug
           echo "🎉 Validación CI completada exitosamente."
+
+      - name: Upload APK as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Instaflix-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
+
