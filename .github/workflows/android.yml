@@ -60,7 +60,7 @@ jobs:
 
 
   coverage:
-    needs: [ analysis-and-test ]
+    needs: [ build ]
     name: Coverage jacoco
     runs-on: ubuntu-latest
     steps:
