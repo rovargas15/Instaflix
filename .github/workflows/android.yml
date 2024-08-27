@@ -111,14 +111,14 @@ jobs:
         run: |
           echo "Building APK for app module..."
           ./gradlew app:assembleDebug
-          echo ✅ apk de debug generada exitosamente."
+          echo "✅ apk de debug generada exitosamente."
 
       - name: Rename APK
         run: |
           APK_PATH=$(find app/build/outputs/apk/debug/ -name "*.apk")
           NEW_APK_NAME="Instaflix-debug"
           mv $APK_PATH app/build/outputs/apk/debug/$NEW_APK_NAME
-          echo ✅ cambio de nombre apk exitosamente. $NEW_APK_NAME"
+          echo "✅ cambio de nombre apk exitosamente. $NEW_APK_NAME"
 
       - name: Upload APK as Artifact
         uses: actions/upload-artifact@v3
