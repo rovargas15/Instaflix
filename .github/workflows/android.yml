@@ -25,5 +25,32 @@ jobs:
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
 
-      - name: Run gradle tests
-        run: ./gradlew test --stacktrace
+      - name: Create secrets.properties
+        run: echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
+
+      - name: Insert API_KEY from GitHub Secrets
+        run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
+
+      - name: Run unit tests
+        run: |
+          echo "Running unit tests..."
+          ./gradlew test --stacktrace
+
+          echo "🧪 Ejecutando pruebas unitarias..."
+          ./gradlew test || exit 1
+
+      - name: Run lint
+        run: |
+          echo "Running lint for..."
+          ./gradlew lint
+
+          echo "📋 Ejecutando lint en $module..."
+            ./gradlew lint || exit 1
+
+      - name: Run Detekt
+        run: |
+          echo "Running Detekt static code analysis..."
+          ./gradlew detekt
+
+          echo "🔎 Ejecutando análisis estático (Detekt)..."
+          ./gradlew detekt || exit 1
