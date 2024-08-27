@@ -52,8 +52,8 @@ else
   echo "❌ No se encontró la APK generada. Revisa el proceso de compilación."
 fi
 
-# Eliminar el secrets.properties
-  rm $SECRET_FILE
-  echo "🧹 Archivo de secretos ($SECRET_FILE) eliminado."
+## Eliminar el secrets.properties
+#  rm $SECRET_FILE
+#  echo "🧹 Archivo de secretos ($SECRET_FILE) eliminado."
 
-echo "🎉 Validación CI completada exitosamente."
+echo "🎉 Validación Local CI completada exitosamente."
