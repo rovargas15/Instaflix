@@ -15,9 +15,10 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Set Up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 17
+          distribution: 'temurin'
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
@@ -38,9 +39,10 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Set Up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 17
+          distribution: 'temurin'
 
       - name: Create secrets.properties
         run: echo echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
@@ -89,9 +91,10 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Set Up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 17
+          distribution: 'temurin'
 
       - name: Create secrets.properties
         run: echo echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
@@ -108,7 +111,6 @@ jobs:
           ./gradlew jacocoTestCoverageVerification  || exit 1
 
 
-
   build-and-deploy:
     needs: [ coverage ]
     runs-on: ubuntu-latest
@@ -117,9 +119,10 @@ jobs:
       - uses: actions/checkout@v1
 
       - name: Set Up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 17
+          distribution: 'temurin'
 
       - name: Create secrets.properties
         run: echo echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
