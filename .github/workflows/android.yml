@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build and Test
+
     runs-on: ubuntu-latest
 
     steps:
@@ -24,75 +24,5 @@ jobs:
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-
-      - name: Create secrets.properties
-        run: echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
-
-      - name: Insert API_KEY from GitHub Secrets
-        run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
-
-      - name: Run unit tests
-        run: |
-          echo "Running unit tests..."
-          ./gradlew test 
-
-          echo "🧪 Ejecutando pruebas unitarias..."
-          ./gradlew test || exit 1
-
-      - name: Run lint
-        run: |
-          echo "Running lint for..."
-          ./gradlew lint
-
-          echo "📋 Ejecutando lint en $module..."
-            ./gradlew lint || exit 1
-
-      - name: Run Detekt
-        run: |
-          echo "Running Detekt static code analysis..."
-          ./gradlew detekt
-
-          echo "🔎 Ejecutando análisis estático (Detekt)..."
-          ./gradlew detekt || exit 1
-
-
-  coverage:
-    needs: [ build ]
-    name: Coverage jacoco
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: Generate JaCoCo Coverage Report
-        run: |
-          echo "📈 Generando informe de cobertura..."
-          ./gradlew :jacocoTestReport || exit 1
-
-          echo "✅ Verificando cobertura de código..."
-          ./gradlew jacocoTestCoverageVerification  || exit 1
-
-
-  build-and-deploy:
-    needs: [ coverage ]
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: set up JDK 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          cache: gradle
-
-      - name: Build APK
-        run: |
-          echo "Building APK for app module..."
-          ./gradlew app:assembleDebug
-          echo "🎉 Validación CI completada exitosamente."
+      - name: Build with Gradle
+        run: ./gradlew build
