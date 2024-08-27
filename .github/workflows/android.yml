@@ -58,6 +58,9 @@ jobs:
         with:
           submodules: true
 
+      - name: List Directory Contents
+        run: ls -al
+
       - name: Build Core with Gradle
         run: ./gradlew :core:build
 
