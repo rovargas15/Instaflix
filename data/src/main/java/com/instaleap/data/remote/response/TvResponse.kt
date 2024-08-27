@@ -42,7 +42,7 @@ data class TvResponse(
             category = category,
         )
 
-    fun toDomain() =
+    fun toDomain(category: String) =
         Tv(
             adult = adult,
             backdropPath = backdropPath ?: "",
@@ -59,6 +59,6 @@ data class TvResponse(
             voteAverage = voteAverage,
             voteCount = voteCount,
             isFavorite = false,
-            category = "",
+            category = category,
         )
 }
