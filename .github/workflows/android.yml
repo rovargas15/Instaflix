@@ -39,13 +39,13 @@ jobs:
       - name: Insert API_KEY from GitHub Secrets
         run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
 
-      - name: Verify and Set Permissions for gradlew (Optional)  # Added step
+      - name: Verify and Set Permissions for gradlew
         run: |
           if [ ! -f ./gradlew ]; then
               echo "gradlew file not found. Please ensure it exists in your project's root directory."
               exit 1
-            fi
-            chmod +x ./gradlew
+          fi
+          chmod +x ./gradlew
 
   build:
     name: Build
@@ -55,6 +55,13 @@ jobs:
       matrix:
         module: [ core, data, domain, favorite, movie, tv ]
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: List Directory Contents
+        run: ls -al
+
       - name: Build with Gradle
         run: ./gradlew :${{ matrix.module }}:build
-
