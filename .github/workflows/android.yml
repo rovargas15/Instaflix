@@ -116,7 +116,7 @@ jobs:
       - name: Rename APK
         run: |
           APK_PATH=$(find app/build/outputs/apk/debug/ -name "*.apk")
-          NEW_APK_NAME="Instaflix-debugapk"
+          NEW_APK_NAME="Instaflix-debug"
           mv $APK_PATH app/build/outputs/apk/debug/$NEW_APK_NAME
           echo ✅ cambio de nombre apk exitosamente. $NEW_APK_NAME"
 
@@ -124,6 +124,6 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: Instaflix-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: app/build/outputs/apk/debug/Instaflix-debug.apk
           run: echo "🎉 Validación CI completada exitosamente."
 

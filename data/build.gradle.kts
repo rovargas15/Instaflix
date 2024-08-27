@@ -26,7 +26,7 @@ android {
         val apiKey = properties.getProperty("API_KEY")
 
         buildConfigField("String", "API_KEY", "\"$apiKey\"")
-        buildConfigField("String", "URL_BASE", "\"https://api.themoviedb.org/\"")
+        buildConfigField("String", "URL_BASE", "\"https://api.themoviedb.org\"")
         buildConfigField("String", "URL_BASE_IMG", "\"https://image.tmdb.org/t/p/\"")
     }
 
