@@ -116,7 +116,7 @@ jobs:
       - name: Rename APK
         run: |
           APK_PATH=$(find app/build/outputs/apk/debug/ -name "*.apk")
-          NEW_APK_NAME="Instaflix-debug"
+          NEW_APK_NAME="Instaflix-debug.apk"
           mv $APK_PATH app/build/outputs/apk/debug/$NEW_APK_NAME
           echo "✅ cambio de nombre apk exitosamente. $NEW_APK_NAME"
 
