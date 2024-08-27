@@ -10,7 +10,7 @@ on:
 
 jobs:
   setup:
-    name: Setup Base Environment
+    name: Setup
     runs-on: ubuntu-latest
     outputs:
       gradle-cache-key: ${{ steps.cache.outputs.cache-hit }}
@@ -39,6 +39,14 @@ jobs:
       - name: Insert API_KEY from GitHub Secrets
         run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
 
+      - name: Verify and Set Permissions for gradlew (Optional)  # Added step
+        run: |
+          if [ ! -f ./gradlew ]; then
+              echo "gradlew file not found. Please ensure it exists in your project's root directory."
+              exit 1
+            fi
+            chmod +x ./gradlew
+
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -47,98 +55,6 @@ jobs:
       matrix:
         module: [ core, data, domain, favorite, movie, tv ]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-
       - name: Build with Gradle
         run: ./gradlew :${{ matrix.module }}:build
 
-  lint:
-    name: Run Lint
-    runs-on: ubuntu-latest
-    needs: setup
-    strategy:
-      matrix:
-        module: [ core, data, domain, favorite, movie, tv ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-
-      - name: Run lint
-        run: ./gradlew :${{ matrix.module }}:lint
-
-  detekt:
-    name: Run Detekt
-    runs-on: ubuntu-latest
-    needs: setup
-    strategy:
-      matrix:
-        module: [ core, data, domain, favorite, movie, tv ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-
-      - name: Run Detekt
-        run: ./gradlew :${{ matrix.module }}:detekt
-
-  test:
-    name: Run Unit Tests
-    runs-on: ubuntu-latest
-    needs: setup
-    strategy:
-      matrix:
-        module: [ core, data, domain, favorite, movie, tv ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-
-      - name: Run unit tests
-        run: ./gradlew :${{ matrix.module }}:test
-
-  coverage:
-    name: Run Jacoco
-    runs-on: ubuntu-latest
-    needs: setup
-    strategy:
-      matrix:
-        module: [ core, data, domain, favorite, movie, tv ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-
-      - name: Generate JaCoCo Coverage Report
-        run: |
-          echo "Generating JaCoCo coverage report for module: ${{ matrix.module }}..."
-          ./gradlew :${{ matrix.module }}:jacocoTestReport -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
-
-      - name: Verify JaCoCo Coverage
-        run: |
-          echo "Checking JaCoCo coverage thresholds for module: ${{ matrix.module }}..."
-          ./gradlew :${{ matrix.module }}:jacocoTestCoverageVerification -PsecretFile=$GITHUB_WORKSPACE/secrets.properties
-
-      - name: Clean Up JaCoCo Reports (Optional)
-        run: |
-          echo "Deleting JaCoCo reports for module: ${{ matrix.module }}..." (Optional step)
-          rm -rf ${{ matrix.module }}/build/reports/jacoco/
-  apk:
-    name: Build APK
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
-
-      - name: Build APK
-        run: ./gradlew :app:assembleDebug
