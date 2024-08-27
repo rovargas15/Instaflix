@@ -50,7 +50,6 @@ jobs:
           echo "🧪 Ejecutando pruebas unitarias..."
           ./gradlew test || exit 1
 
-
       - name: Run lint
         run: |
           echo "Running lint for..."
@@ -59,7 +58,6 @@ jobs:
           echo "📋 Ejecutando lint en $module..."
             ./gradlew lint || exit 1
 
-
       - name: Run Detekt
         run: |
           echo "Running Detekt static code analysis..."
@@ -67,8 +65,6 @@ jobs:
 
           echo "🔎 Ejecutando análisis estático (Detekt)..."
           ./gradlew detekt || exit 1
-
-
 
   coverage:
     needs: [ analysis-and-test ]
@@ -115,11 +111,19 @@ jobs:
         run: |
           echo "Building APK for app module..."
           ./gradlew app:assembleDebug
-          echo "🎉 Validación CI completada exitosamente."
+          echo ✅ apk de debug generada exitosamente."
+
+      - name: Rename APK
+        run: |
+          APK_PATH=$(find app/build/outputs/apk/debug/ -name "*.apk")
+          NEW_APK_NAME="Instaflix-debugapk"
+          mv $APK_PATH app/build/outputs/apk/debug/$NEW_APK_NAME
+          echo ✅ cambio de nombre apk exitosamente. $NEW_APK_NAME"
 
       - name: Upload APK as Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Instaflix-APK
+          name: Instaflix-debug
           path: app/build/outputs/apk/debug/app-debug.apk
+          run: echo "🎉 Validación CI completada exitosamente."
 
