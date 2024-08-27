@@ -1,4 +1,5 @@
 # Instaflix
+[![Android CI/CD Pipeline](https://github.com/rovargas15/Instaflix/actions/workflows/android.yml/badge.svg?branch=master)](https://github.com/rovargas15/Instaflix/actions/workflows/android.yml)
 
 Instaflix es una prueba para Instaleap que presenta un listado de películas y series, divididas en tres categorías cada una.
 
