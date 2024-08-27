@@ -27,22 +27,24 @@ class TvViewModel
         override fun initialState() = TvContract.UiStateTv()
 
         fun fetchData() {
-            viewModelScope.launch(coroutineDispatcher) {
-                updateState {
-                    copy(isLoading = true)
-                }
-                categories.forEach { category ->
-                    getTvByCategoryUseCase.invoke(category).fold(
-                        onSuccess = {
-                            handleSuccess(category, it)
-                        },
-                        onFailure = {
-                            handleError()
-                        },
-                    )
-                }
-                updateState {
-                    copy(isLoading = false)
+            if (uiState.value.isEmpty()) {
+                viewModelScope.launch(coroutineDispatcher) {
+                    updateState {
+                        copy(isLoading = true)
+                    }
+                    categories.forEach { category ->
+                        getTvByCategoryUseCase.invoke(category).fold(
+                            onSuccess = {
+                                handleSuccess(category, it)
+                            },
+                            onFailure = {
+                                handleError()
+                            },
+                        )
+                    }
+                    updateState {
+                        copy(isLoading = false)
+                    }
                 }
             }
         }
@@ -58,7 +60,6 @@ class TvViewModel
                             listPopular = it.filter { it.category == Category.POPULAR },
                             listTopRated = it.filter { it.category == Category.TOP_RATED },
                             listOnTheAir = it.filter { it.category == Category.ON_THE_AIR },
-                            isError = false,
                         )
                     }
                 }
@@ -104,6 +105,12 @@ class TvViewModel
 
                 is UiEventTv.Refresh -> {
                     fetchData()
+                }
+
+                is UiEventTv.SnackBarDismissed -> {
+                    updateState {
+                        copy(isError = false)
+                    }
                 }
             }
         }

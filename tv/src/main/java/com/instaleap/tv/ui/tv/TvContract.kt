@@ -20,6 +20,8 @@ interface TvContract {
         ) : UiEventTv()
 
         data object Refresh : UiEventTv()
+
+        data object SnackBarDismissed : UiEventTv()
     }
 
     sealed class EffectTv {

@@ -63,7 +63,7 @@ class MovieRepositoryImpl
             }
             return DataBase(
                 page = response.page,
-                results = response.results.map { it.toDomain() },
+                results = response.results.map { it.toDomain(category) },
                 totalPages = response.totalPages,
                 totalResults = response.totalResults,
             )

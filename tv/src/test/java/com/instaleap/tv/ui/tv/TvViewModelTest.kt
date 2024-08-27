@@ -8,9 +8,12 @@ import com.instaleap.domain.usecase.GetAllTvUseCase
 import com.instaleap.domain.usecase.GetTvByCategoryUseCase
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.spyk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -89,6 +92,19 @@ class TvViewModelTest {
         }
 
     @Test
+    fun `when fetchData is called, data is not null`() =
+        runTest {
+            val viewmodel = spyk(viewModel)
+            val uiState: TvContract.UiStateTv = mockk()
+            every { viewmodel.uiState.value } returns uiState
+            every { uiState.isEmpty() } returns false
+
+            viewmodel.fetchData()
+
+            confirmVerified(getTvByCategoryUseCase, getAllTvUseCase)
+        }
+
+    @Test
     fun `when fetchData is called and get tv by category use case return error, update state with error`() =
         runTest {
             val tvPopular =
@@ -122,10 +138,15 @@ class TvViewModelTest {
 
             viewModel.fetchData()
 
-            Assert.assertFalse(viewModel.uiState.value.isError)
             Assert.assertEquals(viewModel.uiState.value.listPopular, listOf(tvPopular))
             Assert.assertEquals(viewModel.uiState.value.listTopRated, listOf(tvTopRated))
             Assert.assertEquals(viewModel.uiState.value.listOnTheAir, listOf(tvUpcoming))
+
+            coVerify {
+                getTvByCategoryUseCase.invoke(Category.POPULAR)
+                getTvByCategoryUseCase.invoke(Category.TOP_RATED)
+                getTvByCategoryUseCase.invoke(Category.ON_THE_AIR)
+            }
         }
 
     @Test
@@ -164,5 +185,18 @@ class TvViewModelTest {
             Assert.assertEquals(viewModel.uiState.value.listPopular, dataBase.results)
             Assert.assertEquals(viewModel.uiState.value.listTopRated, dataBase.results)
             Assert.assertEquals(viewModel.uiState.value.listOnTheAir, dataBase.results)
+
+            coVerify {
+                getTvByCategoryUseCase.invoke(Category.POPULAR)
+                getTvByCategoryUseCase.invoke(Category.TOP_RATED)
+                getTvByCategoryUseCase.invoke(Category.ON_THE_AIR)
+            }
+        }
+
+    @Test
+    fun `when onUiEvent SnackBarDismissed is called, is error is false`() =
+        runTest {
+            viewModel.onUiEvent(TvContract.UiEventTv.SnackBarDismissed)
+            Assert.assertFalse(viewModel.uiState.value.isError)
         }
 }

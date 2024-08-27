@@ -8,9 +8,12 @@ import com.instaleap.domain.usecase.GetAllMovieUseCase
 import com.instaleap.domain.usecase.GetMovieByCategoryUseCase
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.mockk
+import io.mockk.spyk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -86,6 +89,12 @@ class MovieViewModelTest {
             Assert.assertEquals(viewModel.uiState.value.listPopular, dataBase.results)
             Assert.assertEquals(viewModel.uiState.value.listTopRated, dataBase.results)
             Assert.assertEquals(viewModel.uiState.value.listUpcoming, dataBase.results)
+
+            coVerify {
+                getMovieByCategoryUseCase.invoke(Category.POPULAR)
+                getMovieByCategoryUseCase.invoke(Category.TOP_RATED)
+                getMovieByCategoryUseCase.invoke(Category.UPCOMING)
+            }
         }
 
     @Test
@@ -122,10 +131,29 @@ class MovieViewModelTest {
 
             viewModel.fetchData()
 
-            Assert.assertFalse(viewModel.uiState.value.isError)
             Assert.assertEquals(viewModel.uiState.value.listPopular, listOf(moviePopular))
             Assert.assertEquals(viewModel.uiState.value.listTopRated, listOf(movieTopRated))
             Assert.assertEquals(viewModel.uiState.value.listUpcoming, listOf(movieUpcoming))
+
+            coVerify {
+                getMovieByCategoryUseCase.invoke(Category.POPULAR)
+                getMovieByCategoryUseCase.invoke(Category.TOP_RATED)
+                getMovieByCategoryUseCase.invoke(Category.UPCOMING)
+                getAllMovieUseCase.invoke(Category.UPCOMING)
+            }
+        }
+
+    @Test
+    fun `when fetchData is called, data is not null`() =
+        runTest {
+            val viewmodel = spyk(viewModel)
+            val uiState: MovieContract.UiStateMovie = mockk()
+            every { viewmodel.uiState.value } returns uiState
+            every { uiState.isEmpty() } returns false
+
+            viewmodel.fetchData()
+
+            confirmVerified(getMovieByCategoryUseCase, getAllMovieUseCase)
         }
 
     @Test
@@ -164,5 +192,12 @@ class MovieViewModelTest {
             Assert.assertEquals(viewModel.uiState.value.listPopular, dataBase.results)
             Assert.assertEquals(viewModel.uiState.value.listTopRated, dataBase.results)
             Assert.assertEquals(viewModel.uiState.value.listUpcoming, dataBase.results)
+        }
+
+    @Test
+    fun `when onUiEvent SnackBarDismissed is called, is error is false`() =
+        runTest {
+            viewModel.onUiEvent(MovieContract.UiEventMovie.SnackBarDismissed)
+            Assert.assertFalse(viewModel.uiState.value.isError)
         }
 }

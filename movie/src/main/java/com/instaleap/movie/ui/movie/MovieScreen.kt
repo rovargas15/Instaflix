@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.instaleap.appkit.component.ErrorScreen
 import com.instaleap.appkit.component.ItemCard
+import com.instaleap.appkit.component.LoaderContent
 import com.instaleap.appkit.component.SnackBarError
 import com.instaleap.appkit.component.TextCategory
 import com.instaleap.appkit.component.TopBarMovie
@@ -85,33 +86,27 @@ private fun TopBar(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    if (uiState.isError) {
-        SnackBarError(state = snackbarHostState)
-    }
+    SnarckBarError(
+        uiState = uiState,
+        onUiEvent = onUiEvent,
+        snackbarHostState = snackbarHostState,
+    )
 
     TopBarMovie(
         selected = Router.Movie,
         content = { innerPadding ->
             if (uiState.isLoading) {
-                // TODO: implement loader here
+                LoaderContent(modifier = Modifier.padding(innerPadding))
+                return@TopBarMovie
             }
 
-            if (uiState.isEmpty()) {
-                ErrorScreen(
-                    type = stringResource(id = com.instaleap.appkit.R.string.movie),
-                    errorMessage = "No Data",
-                ) {
-                    onUiEvent(UiEventMovie.Refresh)
-                }
-            } else {
-                ContentScreen(
-                    innerPadding = innerPadding,
-                    uiState = uiState,
-                    onUiEvent = onUiEvent,
-                    sharedTransitionScope = sharedTransitionScope,
-                    animatedVisibilityScope = animatedVisibilityScope,
-                )
-            }
+            HandleDataEmpty(
+                uiState = uiState,
+                onUiEvent = onUiEvent,
+                innerPadding = innerPadding,
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
         },
         router = {
             onUiEvent(UiEventMovie.Navigate(it))
@@ -127,6 +122,46 @@ private fun TopBar(
             }
         },
     )
+}
+
+@Composable
+private fun SnarckBarError(
+    uiState: MovieContract.UiStateMovie,
+    onUiEvent: (UiEventMovie) -> Unit,
+    snackbarHostState: SnackbarHostState,
+) {
+    if (uiState.isError) {
+        SnackBarError(state = snackbarHostState) {
+            onUiEvent(UiEventMovie.SnackBarDismissed)
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun HandleDataEmpty(
+    uiState: MovieContract.UiStateMovie,
+    onUiEvent: (UiEventMovie) -> Unit,
+    innerPadding: PaddingValues,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+) {
+    if (uiState.isEmpty()) {
+        ErrorScreen(
+            type = stringResource(id = com.instaleap.appkit.R.string.movie),
+            errorMessage = "No Data",
+        ) {
+            onUiEvent(UiEventMovie.Refresh)
+        }
+    } else {
+        ContentScreen(
+            innerPadding = innerPadding,
+            uiState = uiState,
+            onUiEvent = onUiEvent,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = animatedVisibilityScope,
+        )
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)

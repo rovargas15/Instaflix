@@ -42,7 +42,7 @@ data class MovieResponse(
             isFavorite = 0,
         )
 
-    fun toDomain() =
+    fun toDomain(category: String) =
         Movie(
             id = id,
             movieId = id,
@@ -60,6 +60,6 @@ data class MovieResponse(
             voteAverage = voteAverage,
             voteCount = voteCount,
             isFavorite = false,
-            category = "",
+            category = category,
         )
 }
