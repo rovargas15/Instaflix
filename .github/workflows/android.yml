@@ -23,17 +23,18 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Create secrets.properties
-        run: echo "ext { API_KEY = '${{ secrets.API_KEY }}' }" > $GITHUB_WORKSPACE/secrets.properties
-               - name: Persist workspace
-               uses: actions/cache@v3
-               with:
-                 path: ${{ github.workspace }}
-                 key: ${{ runner.os }}-secrets-${{ github.sha }}
-                 restore-keys: |
-                   ${{ runner.os }}-secrets-   
+        run: echo echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
 
       - name: Insert API_KEY from GitHub Secrets
         run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
+
+      - name: Persist workspace
+        uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}
+          key: ${{ runner.os }}-secrets-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-secrets-   
 
   analysis-and-test:
     needs: [ build ]
