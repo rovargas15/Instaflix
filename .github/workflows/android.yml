@@ -45,15 +45,10 @@ jobs:
           distribution: 'temurin'
 
       - name: Create secrets.properties
-        run: echo echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
-
-      - name: Insert API_KEY from GitHub Secrets
-        run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
-
-      - name: Show content of secrets.properties
         run: |
-          echo "Content of secrets.properties:"
-          cat $GITHUB_WORKSPACE/secrets.properties
+          echo "Creating secrets.properties file..."
+          echo "API_KEY=${{ secrets.API_KEY }}" > $GITHUB_WORKSPACE/secrets.properties
+                cat $GITHUB_WORKSPACE/secrets.properties  # Verifica el contenido del archivo (opcional)
 
       - name: Run unit tests
         run: |
@@ -97,10 +92,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Create secrets.properties
-        run: echo echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
-
-      - name: Insert API_KEY from GitHub Secrets
-        run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
+        run: |
+          echo "Creating secrets.properties file..."
+          echo "API_KEY=${{ secrets.API_KEY }}" > $GITHUB_WORKSPACE/secrets.properties
 
       - name: Generate JaCoCo Coverage Report
         run: |
@@ -125,10 +119,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Create secrets.properties
-        run: echo echo "ext { API_KEY = 'themoviedb_key' }" > $GITHUB_WORKSPACE/secrets.properties
-
-      - name: Insert API_KEY from GitHub Secrets
-        run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
+        run: |
+          echo "Creating secrets.properties file..."
+          echo "API_KEY=${{ secrets.API_KEY }}" > $GITHUB_WORKSPACE/secrets.properties
 
       - name: Build APK
         run: |
