@@ -38,9 +38,7 @@ val client: HttpClient =
         }
 
         defaultRequest {
-            url {
-                host = BuildConfig.URL_BASE
-            }
+            url(BuildConfig.URL_BASE)
         }
 
         install(Logging) {
