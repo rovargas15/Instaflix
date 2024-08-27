@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v1
 
       - name: Set Up JDK 17
         uses: actions/setup-java@v4
@@ -34,14 +34,14 @@ jobs:
           path: ${{ github.workspace }}
           key: ${{ runner.os }}-secrets-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-secrets-   
+            ${{ runner.os }}-secrets- 
 
   analysis-and-test:
     needs: [ build ]
     name: Analysis y Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v1
 
       - name: Set Up JDK 17
         uses: actions/setup-java@v4
