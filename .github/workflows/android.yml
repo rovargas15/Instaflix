@@ -13,9 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      # Set Current Date As Env Variable
-      - name: Set current date as env variable
-        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Set Up JDK 17
         uses: actions/setup-java@v1
@@ -30,6 +27,18 @@ jobs:
 
       - name: Insert API_KEY from GitHub Secrets
         run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
+
+  analysis-and-test:
+    needs: [ build ]
+    name: Analysis y Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Set Up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
 
       - name: Run unit tests
         run: |
