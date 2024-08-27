@@ -53,7 +53,7 @@ jobs:
           java-version: 11
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./gradlew build
 
       - name: Run unit tests
         run: |
@@ -80,7 +80,6 @@ jobs:
           ./gradlew detekt || exit 1
 
 
-
   coverage:
     needs: [ analysis-test ]
     name: Coverage jacoco
@@ -101,8 +100,6 @@ jobs:
 
           echo "✅ Verificando cobertura de código..."
           ./gradlew jacocoTestCoverageVerification  || exit 1
-
-
 
 
   build-and-deploy:
