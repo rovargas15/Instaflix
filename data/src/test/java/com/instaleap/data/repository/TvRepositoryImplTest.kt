@@ -246,7 +246,7 @@ class TvRepositoryImplTest {
         runBlocking {
             val results = tvRepositoryImpl.saveTv(response, category)
 
-            assert(results.results == response.results.map { it.toDomain() })
+            assert(results.results == response.results.map { it.toDomain(category) })
             assert(results.totalResults == response.totalResults)
             assert(results.page == response.page)
             assert(results.totalPages == response.totalPages)
