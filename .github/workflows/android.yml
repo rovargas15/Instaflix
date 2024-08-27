@@ -39,11 +39,6 @@ jobs:
       - name: Insert API_KEY from GitHub Secrets
         run: sed -i "s/themoviedb_key/${{ secrets.API_KEY }}/g" $GITHUB_WORKSPACE/secrets.properties
 
-      - name: Display secrets.properties content
-        run: cat $GITHUB_WORKSPACE/secrets.properties
-        env:
-          API_KEY: ${{ secrets.API_KEY }}
-
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -53,7 +48,7 @@ jobs:
         module: [ core, data, domain, favorite, movie, tv ]
     steps:
       - name: Build with Gradle
-        run: ./gradlew :${{ matrix.module }}:clean :${{ matrix.module }}:build
+        run: ./gradlew :${{ matrix.module }}:build
 
   lint:
     name: Run Lint
