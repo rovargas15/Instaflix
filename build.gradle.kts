@@ -12,3 +12,9 @@ plugins {
 subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 }
+
+tasks.register<Exec>("pipeline") {
+    description = "Executes the pipeline.sh script"
+    group = "CI/CD"
+    commandLine("./pipeline.sh", "-f")
+}
