@@ -84,7 +84,30 @@ pipeline performs the following tasks:
 - **Generates a Debug APK**: At the end of the pipeline, a debug APK is generated and uploaded as a
   GitHub artifact, allowing for direct download and testing from the platform.
 
-## LLibraries Used
+## Pipeline local con pipeline.sh
+
+In addition to the GitHub Actions pipeline, you can run the same CI process locally using a
+**pipeline.sh** script. This script will perform all the necessary validations to ensure code
+quality before pushing changes to the repository.
+
+## Instructions to Run the Local Pipeline:
+
+1. Make sure you have the `pipeline.sh` file in the root of the project.
+2. Open a terminal in the project directory and run the following command:
+
+   ```properties 
+    ./pipeline.sh
+
+The script will perform the following tasks:
+
+- **Generate the secrets.properties file if it doesn't exist.**
+- **Run unit tests.**
+- **Validate code with Lint.**
+- **Run Detekt for static code analysis.**
+- **Check code coverage with JaCoCo.**
+- **Generate a debug APK and display the path where it has been saved.**
+
+## Libraries Used
 
 ### Jetpack Compose
 

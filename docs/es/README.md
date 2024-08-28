@@ -1,29 +1,39 @@
 # Instaflix
+
 [![Android CI/CD Pipeline](https://github.com/rovargas15/Instaflix/actions/workflows/android.yml/badge.svg?branch=master)](https://github.com/rovargas15/Instaflix/actions/workflows/android.yml)
 
-Instaflix es una prueba para Instaleap que presenta un listado de películas y series, divididas en tres categorías cada una.
+Instaflix es una prueba para Instaleap que presenta un listado de películas y series, divididas en
+tres categorías cada una.
 
 A continuación se detallan las especificaciones técnicas del proyecto.
 
 ## Prerrequisitos
 
-Antes de ejecutar el proyecto, asegúrate de configurar tu entorno adecuadamente. Tienes dos opciones para hacerlo:
+Antes de ejecutar el proyecto, asegúrate de configurar tu entorno adecuadamente. Tienes dos opciones
+para hacerlo:
 
 ### Opción 1: Uso del script `SecretCreate.sh`
+
 1. Clona el repositorio.
-2. Después de clonar el repositorio, localiza el archivo **SecretCreate.sh** en la raíz del proyecto.
-3. Ábrelo y sigue las instrucciones para agregar tu `API_KEY` de [The Movie Database (TMDB)](https://developers.themoviedb.org/3/getting-started/introduction).
-4. Al ejecutar el script, se generará un archivo `secrets.properties` que contendrá la `API_KEY` requerida por el módulo `data` en Gradle.
+2. Después de clonar el repositorio, localiza el archivo **SecretCreate.sh** en la raíz del
+   proyecto.
+3. Ábrelo y sigue las instrucciones para agregar tu `API_KEY`
+   de [The Movie Database (TMDB)](https://developers.themoviedb.org/3/getting-started/introduction).
+4. Al ejecutar el script, se generará un archivo `secrets.properties` que contendrá la `API_KEY`
+   requerida por el módulo `data` en Gradle.
 
 ### Opción 2: Creación manual de `secrets.properties`
+
 1. Clona el repositorio.
 2. Crea un archivo `secrets.properties` en la raíz del proyecto.
-3. Añade la siguiente línea al archivo, reemplazando `TU_API_KEY` con tu clave API obtenida de [The Movie Database (TMDB)](https://developers.themoviedb.org/3/getting-started/introduction):
+3. Añade la siguiente línea al archivo, reemplazando `TU_API_KEY` con tu clave API obtenida
+   de [The Movie Database (TMDB)](https://developers.themoviedb.org/3/getting-started/introduction):
 
    ```properties 
    API_KEY=TU_API_KEY
 
-Una vez configurado el archivo `secrets.properties` con la `API_KEY`, sincroniza el proyecto y ejecuta la compilación.
+Una vez configurado el archivo `secrets.properties` con la `API_KEY`, sincroniza el proyecto y
+ejecuta la compilación.
 
 ## Tecnologías
 
@@ -33,20 +43,28 @@ predeterminada para este propósito.
 
 ## Arquitectura
 
-El proyecto sigue el enfoque de Clean Architecture, garantizando alta cohesión y bajo acoplamiento mediante la separación en capas:
+El proyecto sigue el enfoque de Clean Architecture, garantizando alta cohesión y bajo acoplamiento
+mediante la separación en capas:
 
 - **Capa de Domain**: Contiene las especificaciones del negocio.
-- **Capa de Data**: Agrupa los componentes asociados a diferentes fuentes de datos, como mappers, modelos de respuesta, entidades y repositorios.
-- **Capa de Presentation**: Contiene los módulos de funcionalidad (`movie`, `tv`, `favorite`) y el NavigatorController, que gestiona el flujo de la aplicación.
+- **Capa de Data**: Agrupa los componentes asociados a diferentes fuentes de datos, como mappers,
+  modelos de respuesta, entidades y repositorios.
+- **Capa de Presentation**: Contiene los módulos de funcionalidad (`movie`, `tv`, `favorite`) y el
+  NavigatorController, que gestiona el flujo de la aplicación.
 - **Feature:**(`movie`, `tv`, `favorite`) Contiene las funcionalidades de la app.
 
 ## Inyección de Dependencias
 
-El proyecto utiliza la *Inyección de Dependencias (DI)* para facilitar la separación de capas, siguiendo el principio de inversión de dependencias. Esto permite evitar que la capa de dominio tenga referencias directas a la capa de datos, haciendo que el código sea más fácil de testear y mantener. El framework utilizado para DI es *Hilt*, que se basa en Dagger para construir el árbol de dependencias de manera eficiente.
+El proyecto utiliza la *Inyección de Dependencias (DI)* para facilitar la separación de capas,
+siguiendo el principio de inversión de dependencias. Esto permite evitar que la capa de dominio
+tenga referencias directas a la capa de datos, haciendo que el código sea más fácil de testear y
+mantener. El framework utilizado para DI es *Hilt*, que se basa en Dagger para construir el árbol de
+dependencias de manera eficiente.
 
 ## Pruebas Unitarias
 
-Se han implementado pruebas unitarias en los viewModels, casos de uso y repositorios, ya que en estos componentes se concentra la mayor parte de la lógica del proyecto.
+Se han implementado pruebas unitarias en los viewModels, casos de uso y repositorios, ya que en
+estos componentes se concentra la mayor parte de la lógica del proyecto.
 
 ## API
 
@@ -58,18 +76,45 @@ Se han implementado pruebas unitarias en los viewModels, casos de uso y reposito
 
 ## Integración Continua (CI) con GitHub Actions
 
-Se ha integrado un pipeline de CI utilizando GitHub Actions para validar el proyecto de manera automática. Este pipeline realiza las siguientes tareas:
+Se ha integrado un pipeline de CI utilizando GitHub Actions para validar el proyecto de manera
+automática. Este pipeline realiza las siguientes tareas:
 
 - **Ejecuta pruebas unitarias**: Verifica que todas las pruebas pasen correctamente.
 - **Valida el código con Lint**: Asegura que el código cumple con las reglas de estilo definidas.
-- **Ejecuta Detekt**: Realiza un análisis estático del código para identificar posibles errores y mantener la calidad.
-- **Verifica la cobertura del código con JaCoCo**: Genera un reporte de cobertura de pruebas y asegura que se cumplen los umbrales definidos.
-- **Genera una APK de debug**: Al final del pipeline, se genera una APK en modo debug y se sube como un artefacto en GitHub, lo que permite su descarga y prueba directa desde la plataforma.
+- **Ejecuta Detekt**: Realiza un análisis estático del código para identificar posibles errores y
+  mantener la calidad.
+- **Verifica la cobertura del código con JaCoCo**: Genera un reporte de cobertura de pruebas y
+  asegura que se cumplen los umbrales definidos.
+- **Genera una APK de debug**: Al final del pipeline, se genera una APK en modo debug y se sube como
+  un artefacto en GitHub, lo que permite su descarga y prueba directa desde la plataforma.
 
+## Pipeline local con pipeline.sh
+
+Además del pipeline en GitHub Actions, puedes ejecutar el mismo proceso de integración continua
+localmente utilizando un script **pipeline.sh.** Este script realizará todas las validaciones necesarias
+para asegurar la calidad del código antes de subir cambios al repositorio.
+
+## Instrucciones para ejecutar el pipeline local:
+
+1. Asegúrate de tener el archivo `pipeline.sh` en la raíz del proyecto.
+2. Abre una terminal en la ruta del proyecto y ejecuta el siguiente comando:
+
+   ```properties 
+    ./pipeline.sh
+
+El script realizará las siguientes tareas:
+
+- **Genera el archivo secrets.properties sino existe**
+- **Ejecutar pruebas unitarias.**
+- **Validar el código con Lint.**
+- **Ejecutar Detekt para análisis estático del código.**
+- **Verificar la cobertura del código con JaCoCo.**
+- **Generar una APK de debug y mostrar la ruta donde se ha guardado.**
 
 ## Librerías Utilizadas
 
 ### Jetpack Compose
+
 - [Material Design](https://material.io/blog/jetpack-compose)
 - [UI Tooling](https://developer.android.com/jetpack/compose/layouts/material?hl=es-419)
 - [Activity Compose](https://developer.android.com/jetpack/compose/layouts/material?hl=es-419)
@@ -78,10 +123,12 @@ Se ha integrado un pipeline de CI utilizando GitHub Actions para validar el proy
 - [Navigation](https://developer.android.com/jetpack/compose/navigation?hl=es-419)
 
 ### Test
+
 - [Mockk](https://github.com/mirtizakh/Android-Mockk)
 - [Compose Test](https://developer.android.com/jetpack/compose/testing?hl=es-419)
 
 ### Otras
+
 - [Coroutines Core](https://github.com/Kotlin/kotlinx.coroutines)
 - [Room](https://developer.android.com/training/data-storage/room)
 - [Lifecycle ViewModel](https://github.com/androidx/androidx)
