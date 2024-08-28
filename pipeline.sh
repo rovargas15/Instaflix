@@ -8,13 +8,17 @@ SECRET_FILE="secrets.properties"
 APK_DIR="app/build/outputs/apk/debug/"
 APK_NAME="app-debug-$(date +%Y%m%d%H%M%S).apk"  # Nombre único basado en fecha y hora
 APK_PATH="$APK_DIR$APK_NAME"
+IS_EXITS_SECRET_FILE=1
 
 # Crear el secrets.properties si no existe
 if [ ! -f "$SECRET_FILE" ]; then
   echo "🔑 Creando archivo de secretos ($SECRET_FILE)..."
   echo "API_KEY = $API_KEY" > $SECRET_FILE
+  IS_EXITS_SECRET_FILE=1
+  echo "🎉Se creao secrets.properties exitosamente."
 else
   echo "🔑 El archivo de secretos ($SECRET_FILE) ya existe. Saltando creación."
+  IS_EXITS_SECRET_FILE=0
 fi
 
 # Ejecutar tareas de lint, análisis estático, pruebas unitarias, y generación de informes de cobertura
@@ -52,8 +56,11 @@ else
   echo "❌ No se encontró la APK generada. Revisa el proceso de compilación."
 fi
 
-## Eliminar el secrets.properties
-#  rm $SECRET_FILE
-#  echo "🧹 Archivo de secretos ($SECRET_FILE) eliminado."
-
+# Eliminar el secrets.properties
+if [ $IS_EXITS_SECRET_FILE -eq 1 ]; then
+      rm $SECRET_FILE
+      echo "🧹 Archivo de secretos ($SECRET_FILE) eliminado."
+else
+     echo "🔑 El archivo de secretos no fue eliminado. Saltando eliminación."
+fi
 echo "🎉 Validación Local CI completada exitosamente."
